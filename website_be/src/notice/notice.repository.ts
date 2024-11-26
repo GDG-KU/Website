@@ -19,6 +19,10 @@ export class NoticeRepository extends Repository<Notice> {
         const [notices, total] = await queryBuilder.getManyAndCount();
         return [notices, total];
     }
+
+    async findById(id: number){
+        return await this.repository.findOne({where: {id}});
+    }
     
 
 }

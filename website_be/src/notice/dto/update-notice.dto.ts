@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { UserRole } from "src/common/enums/user-role.enum";
+import { Transform } from "class-transformer";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { getRoleByName} from "src/common/enums/user-role.enum";
+
 
 export class UpdateNoticeDto {
     @ApiProperty({
@@ -30,7 +32,7 @@ export class UpdateNoticeDto {
         example: 'lead',
         description: 'Viewer role',
     })
-    @IsEnum(UserRole)
     @IsOptional()
-    role: string;
+    @Transform(({ value }) => getRoleByName(value))
+    role_id: number;
 }

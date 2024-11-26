@@ -19,7 +19,7 @@ export class NoticeController {
   @Get()
   @ApiOperation({ summary: 'Get all notice' })
   findAllNotice(@Query('page') page: number = 1) {
-    const viewer = 1;
+    const viewer = 2;
     return this.noticeService.findAllNotice(page, viewer);
   }
 
@@ -30,13 +30,10 @@ export class NoticeController {
     return this.noticeService.update(updator, UpdateNoticeDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.noticeService.findOne(+id);
-  }
-
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a notice' })
   remove(@Param('id') id: string) {
-    return this.noticeService.remove(+id);
+    const deleter = 1;
+    return this.noticeService.remove(deleter, +id);
   }
 }
