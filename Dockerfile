@@ -1,19 +1,16 @@
 # 첫 번째 단계: 빌드 단계
 FROM node:16-alpine AS builder
 
-WORKDIR /app
+WORKDIR /app/website_be
 
 # 소스 코드와 package.json 파일을 복사
-ADD website_be/package.json website_be/package-lock.json /app/website_be/
-
-WORKDIR /app/website_be
+ADD website_be/package.json website_be/package-lock.json ./
 
 # 의존성 설치
 RUN npm install
 
 # 나머지 소스 코드를 복사
 ADD website_be /app/website_be
-
 
 # 애플리케이션 빌드
 RUN npm run build
@@ -25,10 +22,7 @@ WORKDIR /app
 
 # 빌드 단계에서 생성된 빌드 아티팩트만 복사
 COPY --from=builder /app/website_be/dist /app/dist
-COPY --from=builder /app/website_be/package.json /app/package-lock.json /app/
-
-# 작업 디렉토리 변경
-WORKDIR /app
+COPY --from=builder /app/website_be/package.json /app/website_be/package-lock.json /app/
 
 # 프로덕션 의존성만 설치
 RUN npm install --only=production
