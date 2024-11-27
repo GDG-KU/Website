@@ -13,7 +13,10 @@ export class NoticeRepository extends Repository<Notice> {
 
     async findAllNotice(skip: number, take: number, viewer: number) {
         const queryBuilder = this.repository.createQueryBuilder('notice');
-        queryBuilder.leftJoinAndSelect('notice.role_id', 'role', 'role.id > :viewer', { viewer });
+        queryBuilder.leftJoin('notice.role', 'role');
+        queryBuilder.where('role.id >= :viewer', { viewer });
+        queryBuilder.select(['notice.id', 'notice.title', 'notice.created_at', 'role.role_type']);
+        queryBuilder.orderBy('notice.created_at', 'DESC');
         queryBuilder.skip(skip).take(take);
         
         const [notices, total] = await queryBuilder.getManyAndCount();
@@ -21,7 +24,7 @@ export class NoticeRepository extends Repository<Notice> {
     }
 
     async findById(id: number){
-        return await this.repository.findOne({where: {id}});
+        return await this.repository.findOne({where: {id}, relations: ['role']});
     }
     
 

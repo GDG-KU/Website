@@ -13,8 +13,8 @@ export class NoticeService {
     ) {}
 
     async create(creator: number, createNoticeDto: CreateNoticeDto) {
-      if (creator > 1) {
-        throw new UnauthorizedException('You are not authorized to create a notice');
+      if (creator > 2) {
+        throw new UnauthorizedException('You are not authorized to create a notice'); // not authorized
       }
 
       const role = await this.roleRepository.findById(createNoticeDto.role_id);
@@ -23,12 +23,12 @@ export class NoticeService {
 
       notice.title = createNoticeDto.title;
       notice.content = createNoticeDto.content;
-      notice.role_id = role;
+      notice.role = role;
 
       return this.noticeRepository.save(notice);
     }
 
-    async findAllNotice(page: number,viewer: number) {
+    async findAllNotice(viewer: number, page: number) {
       if (page < 1) {
         page = 1; // default page is 1
       } 
@@ -45,13 +45,22 @@ export class NoticeService {
       }
     }
 
-    findOne(id: number) {
-      return `This action returns a #${id} notice`;
+    async findDetailNotice(viewer: number, id: number) {
+      const notice = await this.noticeRepository.findById(id);
+      
+      if (!notice) {
+        throw new NotFoundException('Notice not found'); // notice not found
+      }
+      if (notice.role.id < viewer) {
+        throw new UnauthorizedException('You are not authorized to view this notice'); // not authorized
+      }
+
+      return notice;
     }
 
     async update(updator: number, UpdateNoticeDto: UpdateNoticeDto) {
-      if (updator > 1) {
-        throw new UnauthorizedException('You are not authorized to update a notice');
+      if (updator > 2) {
+        throw new UnauthorizedException('You are not authorized to update a notice'); // not authorized
       }
 
       const role = await this.roleRepository.findById(UpdateNoticeDto.role_id);
@@ -60,7 +69,7 @@ export class NoticeService {
 
       notice.title = UpdateNoticeDto.title;
       notice.content = UpdateNoticeDto.content;
-      notice.role_id = role;
+      notice.role = role;
 
       return this.noticeRepository.update(UpdateNoticeDto.id, notice);
     }

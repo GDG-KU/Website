@@ -10,10 +10,10 @@ export class Role {
     @Column({name : 'role_type', type : 'varchar', length : 64})
     role_type: string;
 
-    @ManyToMany(() => User, user => user.role_id)
+    @ManyToMany(() => User, user => user.roles)
     @JoinTable({name : 'user_role'})
-    user_id: User[];
+    users: User[];
 
-    @OneToMany(() => Notice, notice => notice.role_id)
-    notice_id: Notice[];
+    @OneToMany(() => Notice, notice => notice.role)
+    notices: Notice[];
 }

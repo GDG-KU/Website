@@ -14,16 +14,16 @@ export class User {
     @Column({name : 'password', type : 'varchar'})
     password: string;
 
-    @OneToMany(() => Notice, notice => notice.user_id)
-    notice_id: Notice[];
+    @OneToMany(() => Notice, notice => notice.user)
+    notices: Notice[];
 
-    @ManyToMany(() => Authority, authority => authority.user_id)
+    @ManyToMany(() => Authority, authority => authority.users)
     @JoinTable({name : 'user_authority'})
-    authority_id: Authority[];
+    authoritys: Authority[];
 
-    @ManyToMany(() => Role, role => role.user_id)
+    @ManyToMany(() => Role, role => role.users)
     @JoinTable({name : 'user_role'})
-    role_id: Role[];
+    roles: Role[];
 
     @CreateDateColumn()
     created_at: Date;
