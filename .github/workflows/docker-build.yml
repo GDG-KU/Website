@@ -38,9 +38,9 @@ jobs:
 
   deploy_dev:
     needs: build
-#    if: startsWith(github.ref, 'refs/tags/release-dev-')
-    runs-on: self-hosted
-#    runs-on: ['self-hosted', 'dev']
+    if: startsWith(github.ref, 'refs/tags/release-dev-')
+#    runs-on: self-hosted
+    runs-on: ['self-hosted', 'dev']
     steps:
       - name: setup .env
         run: |
