@@ -13,13 +13,13 @@ export class Notice {
     @Column({name : 'content', type : 'varchar', length : 2048})
     content: string;
 
-    @ManyToOne(() => User, user => user.notice_id)
+    @ManyToOne(() => User, user => user.notices)
     @JoinColumn({name : 'user_id'})
-    user_id: User;
+    user: User;
 
-    @ManyToOne(() => Role, role => role.notice_id)
+    @ManyToOne(() => Role, role => role.notices)
     @JoinColumn({name : 'role_id'})
-    role_id: Role;
+    role: Role;
 
     @CreateDateColumn()
     created_at: Date;

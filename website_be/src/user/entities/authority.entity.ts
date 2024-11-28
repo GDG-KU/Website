@@ -9,7 +9,7 @@ export class Authority {
     @Column({name : 'type', type : 'varchar', length : 64})
     type: string;
 
-    @ManyToMany(() => User, user => user.authority_id)
+    @ManyToMany(() => User, user => user.authoritys)
     @JoinTable({name : 'user_authority'})
-    user_id: User[];
+    users: User[];
 }

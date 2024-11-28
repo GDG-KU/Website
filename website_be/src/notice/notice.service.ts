@@ -1,23 +1,34 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { NoticeRepository } from './notice.repository';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
+import { Notice } from './entities/notice.entity';
+import { RoleRepository } from 'src/user/role.repository';
 
 @Injectable()
 export class NoticeService {
     constructor(
       private readonly noticeRepository: NoticeRepository,
+      private readonly roleRepository: RoleRepository,
     ) {}
 
-    create(creator: number, createNoticeDto: CreateNoticeDto) {
-      if (creator > 1) {
-        throw new UnauthorizedException('You are not authorized to create a notice');
+    async create(creator: number, createNoticeDto: CreateNoticeDto) {
+      if (creator > 2) {
+        throw new UnauthorizedException('You are not authorized to create a notice'); // not authorized
       }
 
-      return this.noticeRepository.save(createNoticeDto);
+      const role = await this.roleRepository.findById(createNoticeDto.role_id);
+      const notice = new Notice();
+
+
+      notice.title = createNoticeDto.title;
+      notice.content = createNoticeDto.content;
+      notice.role = role;
+
+      return this.noticeRepository.save(notice);
     }
 
-    async findAllNotice(page: number,viewer: number) {
+    async findAllNotice(viewer: number, page: number) {
       if (page < 1) {
         page = 1; // default page is 1
       } 
@@ -34,18 +45,47 @@ export class NoticeService {
       }
     }
 
-    findOne(id: number) {
-      return `This action returns a #${id} notice`;
-    }
-
-    update(updator: number, UpdateNoticeDto: UpdateNoticeDto) {
-      if (updator > 1) {
-        throw new UnauthorizedException('You are not authorized to update a notice');
+    async findDetailNotice(viewer: number, id: number) {
+      const notice = await this.noticeRepository.findById(id);
+      
+      if (!notice) {
+        throw new NotFoundException('Notice not found'); // notice not found
       }
-      return this.noticeRepository.update(UpdateNoticeDto.id, UpdateNoticeDto);
+      if (notice.role.id < viewer) {
+        throw new UnauthorizedException('You are not authorized to view this notice'); // not authorized
+      }
+
+      return notice;
     }
 
-    remove(id: number) {
-      return `This action removes a #${id} notice`;
+    async update(updator: number, UpdateNoticeDto: UpdateNoticeDto) {
+      if (updator > 2) {
+        throw new UnauthorizedException('You are not authorized to update a notice'); // not authorized
+      }
+
+      const role = await this.roleRepository.findById(UpdateNoticeDto.role_id);
+      const notice = new Notice();
+
+
+      notice.title = UpdateNoticeDto.title;
+      notice.content = UpdateNoticeDto.content;
+      notice.role = role;
+
+      return this.noticeRepository.update(UpdateNoticeDto.id, notice);
+    }
+
+    async remove(deletor: number, id: number) {
+      if (deletor > 1) {
+        throw new UnauthorizedException('You are not authorized to delete a notice');
+      }
+      const notice = await this.noticeRepository.findById(id);
+
+      if (!notice) {
+        throw new NotFoundException('Notice not found');
+      }
+
+      await this.noticeRepository.remove(notice);
+      
+      return `Notice${id} deleted successfully`;
     }
 }
