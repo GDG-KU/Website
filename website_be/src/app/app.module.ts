@@ -14,9 +14,9 @@ import { NoticeModule } from 'src/notice/notice.module';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
-      extra: {
-        socketPath: process.env.DB_SOCKETPATH
-      },
+      // extra: {
+      //   socketPath: process.env.DB_SOCKETPATH
+      // },
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
