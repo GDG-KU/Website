@@ -7,6 +7,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Notice } from 'src/notice/entities/notice.entity';
 import { UserModule } from 'src/user/user.module';
 import { NoticeModule } from 'src/notice/notice.module';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
   imports: [
@@ -16,12 +17,12 @@ import { NoticeModule } from 'src/notice/notice.module';
       host: process.env.DB_HOST,
       // extra: {
       //   socketPath: process.env.DB_SOCKETPATH
-      // },
+      // }, 
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Notice],
+      entities: [User, Notice], 
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
       charset: 'utf8mb4',
@@ -34,6 +35,6 @@ import { NoticeModule } from 'src/notice/notice.module';
     NoticeModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, GoogleStrategy],
 })
 export class AppModule {}
