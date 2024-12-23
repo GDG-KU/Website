@@ -8,11 +8,11 @@ export class User {
     @PrimaryGeneratedColumn({name : 'id', type : 'int'})
     id: number;
 
-    @Column({name : 'login_id', type : 'varchar'})
-    login_id: string;
+    @Column({name : 'email', type : 'varchar'})
+    email: string;
 
-    @Column({name : 'password', type : 'varchar'})
-    password: string;
+    @Column({name : 'nickname', type : 'varchar'})
+    nickname: string;
 
     @OneToMany(() => Notice, notice => notice.user)
     notices: Notice[];
@@ -24,6 +24,12 @@ export class User {
     @ManyToMany(() => Role, role => role.users)
     @JoinTable({name : 'user_role'})
     roles: Role[];
+
+    @Column({name : 'refresh_token', type : 'varchar', nullable : true})
+    refresh_token: string;
+
+    @Column({name : 'point', type : 'int', default : 0})
+    point: number;
 
     @CreateDateColumn()
     created_at: Date;
