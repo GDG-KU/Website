@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req, Post, Body } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Post, Body, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GoogleAuthGuard } from './security/google.guard';
@@ -6,6 +6,7 @@ import { JwtAuthGuard } from './security/jwt.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { TokensResponseDto } from './dto/response/tokens.response.dto';
 import { RefreshDto } from './dto/request/refresh.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -25,8 +26,15 @@ export class AuthController {
   })
   @UseGuards(GoogleAuthGuard)
   // get user info from google
-  googleAuthRedirect(@Req() req){
-    return this.authService.googleCallback(req)
+  async googleAuthRedirect(@Req() req, @Res({ passthrough: true }) res: Response){
+    // access token, refresh token 반환
+    const {access_token, refresh_token} = await this.authService.googleCallback(req);
+    
+    // refresh token 쿠키에 저장
+    res.cookie('refresh_token', refresh_token, { httpOnly: true});
+    
+    // access token 반환 (개발용으로 현재는 refresh token도 반환)
+    return {access_token, refresh_token};
   }
 
 
@@ -37,8 +45,15 @@ export class AuthController {
     type: TokensResponseDto,
   })
   // refresh token
-  refresh(@Body() refreshDto: RefreshDto){
-    return this.authService.refreshTokens(refreshDto.refresh_token)
+  async refresh(@Body() refreshDto: RefreshDto, @Res({ passthrough: true }) res: Response){
+    // refresh token 검증 후 access token, refresh token 재발급
+    const {access_token, refresh_token}= await this.authService.refreshTokens(refreshDto.refresh_token)
+    
+    // refresh token 쿠키에 저장
+    res.cookie('refresh_token', refresh_token, { httpOnly: true});
+    
+    // access token 반환 (개발용으로 현재는 refresh token도 반환)
+    return {access_token, refresh_token};
   }
 
   @Get('api/test')

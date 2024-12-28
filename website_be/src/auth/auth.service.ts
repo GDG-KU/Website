@@ -38,10 +38,16 @@ export class AuthService {
   }
 
   async refreshTokens(refresh_token: string): Promise<TokensResponseDto> {
+    let payload;
+    
     // refresh token 검증
-    const payload = this.jwtService.verify(refresh_token, {
-      secret: this.configService.get('JWT_SECRET'),
-    });
+    try {
+      payload = this.jwtService.verify(refresh_token, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
 
     const user_id = payload.id;
     const user = await this.userRepositroy.findById(user_id);
