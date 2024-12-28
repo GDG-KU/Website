@@ -42,8 +42,10 @@ export class AuthController {
   }
 
   @Get('api/test')
+  @ApiOperation({ summary: '테스트 API', description: 'JWT 인증 테스트 api' })
   @ApiBearerAuth('token')
   @UseGuards(JwtAuthGuard)
+  // test api
   getTest(@Req() req): string {
     const {user} = req;
     console.log(user.email);
