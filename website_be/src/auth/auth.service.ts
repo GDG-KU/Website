@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
-import { GoogleResponseDto } from './dto/response/google.response.dto';
+import { TokensResponseDto } from './dto/response/tokens.response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from 'src/user/user.repository';
@@ -13,7 +13,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async googleCallback(req): Promise<GoogleResponseDto> {
+  async googleCallback(req): Promise<TokensResponseDto> {
     if (!req.user) {
       throw new UnauthorizedException("User not found");
     }
@@ -28,13 +28,29 @@ export class AuthService {
       newuser.nickname = user.lastName+user.firstName;
       const existingUser = await this.userRepositroy.save(newuser); 
     }
-    console.log(existingUser);
 
     const access_token = await this.generateAccessToken(existingUser.id);
-    console.log(access_token);
     const refresh_token = await this.updateRefresh(existingUser.id);
-    console.log(refresh_token);
+
     return { access_token, refresh_token };
+  }
+
+  async refreshTokens(refresh_token: string): Promise<TokensResponseDto> {
+    const payload = this.jwtService.verify(refresh_token, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
+
+    const user_id = payload.id;
+    const user = await this.userRepositroy.findById(user_id);
+
+    if(!user || user.refresh_token !== refresh_token || payload.type !== 'refresh'){
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const access_token = await this.generateAccessToken(user_id);
+    const new_refresh_token = await this.updateRefresh(user_id);
+
+    return { access_token, refresh_token: new_refresh_token };
   }
 
   private async updateRefresh(id: number): Promise<string> {
