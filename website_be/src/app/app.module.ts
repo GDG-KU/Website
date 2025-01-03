@@ -7,7 +7,8 @@ import { User } from 'src/user/entities/user.entity';
 import { Notice } from 'src/notice/entities/notice.entity';
 import { UserModule } from 'src/user/user.module';
 import { NoticeModule } from 'src/notice/notice.module';
-import { GoogleStrategy } from './google.strategy';
+import { GoogleStrategy } from '../auth/security/google.strategy';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { GoogleStrategy } from './google.strategy';
     }),
     UserModule,
     NoticeModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],
