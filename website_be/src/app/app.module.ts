@@ -9,6 +9,12 @@ import { UserModule } from 'src/user/user.module';
 import { NoticeModule } from 'src/notice/notice.module';
 import { GoogleStrategy } from '../auth/security/google.strategy';
 import { AuthModule } from 'src/auth/auth.module';
+import { CalendarModule } from 'src/calendar/calendar.module';
+import { Authority } from 'src/user/entities/authority.entity';
+import { Role } from 'src/user/entities/role.entity';
+import { Calendar } from 'src/calendar/entities/calender.entity';
+import { Event } from 'src/calendar/entities/event.entity';
+import { Tag } from 'src/calendar/entities/tag.entity';
 
 @Module({
   imports: [
@@ -23,7 +29,7 @@ import { AuthModule } from 'src/auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Notice], 
+      entities: [User, Notice, Authority, Role, Calendar, Event, Tag], 
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
       charset: 'utf8mb4',
@@ -35,6 +41,7 @@ import { AuthModule } from 'src/auth/auth.module';
     UserModule,
     NoticeModule,
     AuthModule,
+    CalendarModule,
   ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],

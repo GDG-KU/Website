@@ -2,6 +2,7 @@ import { Notice } from "src/notice/entities/notice.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Authority } from "./authority.entity";
 import { Role } from "./role.entity";
+import { Event } from "src/calendar/entities/event.entity";
 
 @Entity({ schema: 'user', name: 'user' })
 export class User {
@@ -33,4 +34,8 @@ export class User {
 
     @CreateDateColumn()
     created_at: Date;
+
+    @ManyToMany(() => Event, event => event.users)
+    @JoinTable({name : 'user_event'})
+    events: Event[];
 }
