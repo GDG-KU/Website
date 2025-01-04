@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Event } from "./event.entity";
+import { Tag } from "./tag.entity";
 
-@Entity({ schema: 'calendar', name: 'calendar' })
-export class Calendar {
+@Entity({ schema: 'event', name: 'event' })
+export class Event {
     @PrimaryGeneratedColumn({name : 'id', type : 'int'})
     id: number;
 
@@ -21,7 +21,7 @@ export class Calendar {
     @Column({name : 'url', type : 'varchar', length : 64})
     url: string;
 
-    @ManyToOne(() => Event, event => event.calendars)
-    @JoinColumn({name : 'event_id'})
-    event: Event;
+    @ManyToOne(() => Tag, tag => tag.events)
+    @JoinColumn({name : 'tag_id'})
+    tag: Tag;
 }

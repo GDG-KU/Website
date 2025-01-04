@@ -1,6 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { TagResponseDto } from "./tag.response.dto";
 
-export class CreateCalendarDto {
+export class EventResponseDto {
+  @ApiProperty({
+    example: 1,
+    description: "ID",
+  })
+  id: number;
+
   @ApiProperty({
     example: "/WK3",
     description: "Title",
@@ -8,13 +15,13 @@ export class CreateCalendarDto {
   title: string;
 
   @ApiProperty({
-    example: "2021-09-01T00:00:00Z",
+    example: "2025-01-01T00:00:00Z",
     description: "Start date",
   })
   start_date: Date;
 
   @ApiProperty({
-    example: "2021-09-02T00:00:00Z",
+    example: "2025-01-02T00:00:00Z",
     description: "End date",
   })
   end_date: Date;
@@ -30,10 +37,10 @@ export class CreateCalendarDto {
     description: "URL",
   })
   url: string;
-
+  
   @ApiProperty({
-    example: "branch/fe",
-    description: "Tag",
+    type: TagResponseDto,
+    description: "Event detail",
   })
-  tag: string;
+  tag: TagResponseDto;
 }

@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
-import { Event } from "../entities/event.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Tag } from "../entities/tag.entity";
 
 @Injectable()
-export class EventRepository extends Repository<Event> {
+export class TagRepository extends Repository<Tag> {
   constructor(
-    @InjectRepository(Event) private readonly repository: Repository<Event>,
+    @InjectRepository(Tag) private readonly repository: Repository<Tag>,
   ) {
     super(repository.target, repository.manager);
   }

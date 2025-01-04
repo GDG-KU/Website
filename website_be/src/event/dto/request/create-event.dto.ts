@@ -1,13 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { EventResponseDto } from "./event.response.dto";
 
-export class CalendarResponseDto {
-  @ApiProperty({
-    example: 1,
-    description: "ID",
-  })
-  id: number;
-
+export class CreateEventDto {
   @ApiProperty({
     example: "/WK3",
     description: "Title",
@@ -37,10 +30,10 @@ export class CalendarResponseDto {
     description: "URL",
   })
   url: string;
-  
+
   @ApiProperty({
-    type: EventResponseDto,
-    description: "Event detail",
+    example: "branch/fe",
+    description: "Tag",
   })
-  event: EventResponseDto;
+  tag: string;
 }

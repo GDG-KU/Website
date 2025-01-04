@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class DeleteCalendarDto {
+export class DeleteEventDto {
   @ApiProperty({
     example: 1,
     description: "ID",
