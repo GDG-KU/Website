@@ -14,7 +14,6 @@ export class TagService {
 
   async addUser(tagAddDto: TagUserDto) {
     const {user_ids, tag_id} = tagAddDto;
-    console.log(user_ids, tag_id);
     return await this.tagRepository.addUser(user_ids, tag_id);
   }
 }
