@@ -12,9 +12,10 @@ import { AuthModule } from 'src/auth/auth.module';
 import { Authority } from 'src/user/entities/authority.entity';
 import { Role } from 'src/user/entities/role.entity';
 import { Event } from 'src/event/entities/event.entity';
-import { Tag } from 'src/event/entities/tag.entity';
-import { TagProperty } from 'src/event/entities/tag_property.entity';
+import { Tag } from 'src/tag/entities/tag.entity';
 import { EventModule } from 'src/event/event.module';
+import { TagProperty } from 'src/tag/entities/tag_property.entity';
+import { TagModule } from 'src/tag/tag.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { EventModule } from 'src/event/event.module';
     NoticeModule,
     AuthModule,
     EventModule,
+    TagModule
   ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],

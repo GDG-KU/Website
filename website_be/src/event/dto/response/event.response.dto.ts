@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { TagResponseDto } from "./tag.response.dto";
+import { TagResponseDto } from "src/tag/dto/response/tag.response.dto";
 
 export class EventResponseDto {
   @ApiProperty({

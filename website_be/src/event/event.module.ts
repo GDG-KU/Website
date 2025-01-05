@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Event } from './entities/event.entity';
-import { Tag } from './entities/tag.entity';
-import { TagProperty } from './entities/tag_property.entity';
 import { EventController } from './event.controller';
 import { EventService } from './service/event.service';
 import { EventRepository } from './repository/event.repository';
-import { TagRepository } from './repository/tag.repository';
+import { TagModule } from 'src/tag/tag.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, Tag, TagProperty])],
+  imports: [TypeOrmModule.forFeature([Event]), TagModule],
   controllers: [EventController],
-  providers: [EventService, EventRepository, TagRepository],
+  providers: [EventService, EventRepository],
 })
 export class EventModule {}

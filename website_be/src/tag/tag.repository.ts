@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Tag } from "../entities/tag.entity";
+import { Tag } from "./entities/tag.entity";
 
 @Injectable()
 export class TagRepository extends Repository<Tag> {
@@ -14,6 +14,13 @@ export class TagRepository extends Repository<Tag> {
 
   async findByTitle(title: string) {
     return await this.repository.findOne({where: {title}});
+  }
+
+  async addUser(user_ids: number[], tag_id: number) {
+    return await this.repository.createQueryBuilder()
+      .relation(Tag, 'users')
+      .of(tag_id)
+      .add(user_ids);
   }
   
 }

@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { TagRepository } from '../repository/tag.repository';
 import { EventRepository } from '../repository/event.repository';
 import { CreateEventDto } from '../dto/request/create-event.dto';
 import { EventResponseDto } from '../dto/response/event.response.dto';
-import { Tag } from '../entities/tag.entity';
+import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
 import { FindEventDto } from '../dto/request/find-event.dto';
+import { TagRepository } from 'src/tag/tag.repository';
 
 
 @Injectable()
@@ -37,17 +37,16 @@ export class EventService {
         event = await queryRunner.manager.save(Event, {...eventData, tag: newtag});
 
         await queryRunner.commitTransaction();
+        return event;
       } catch (err) {
         await queryRunner.rollbackTransaction();
-        await queryRunner.release();
         throw err;
+      } finally {
+        await queryRunner.release();
       }
-      
-      await queryRunner.release();
-      return event;
     }
     else{
-      return this.eventRepository.save({...eventData, origintag});
+      return this.eventRepository.save({...eventData, tag: origintag});
     }
   }
 
