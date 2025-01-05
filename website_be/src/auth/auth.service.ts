@@ -4,6 +4,7 @@ import { TokensResponseDto } from './dto/response/tokens.response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from 'src/user/user.repository';
+import { DataSource, QueryRunner } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,7 @@ export class AuthService {
     private readonly userRepositroy: UserRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private dataSource: DataSource,
   ) {}
 
   async googleCallback(req): Promise<TokensResponseDto> {
@@ -20,21 +22,35 @@ export class AuthService {
     }
 
     const user = req.user;
-    const existingUser = await this.userRepositroy.findByEmail(user.email);
 
-    if (!existingUser){
-      // 최초 가입자일 시 유저 정보 저장
-      const newuser = new User();
-      newuser.email = user.email;
-      newuser.nickname = user.lastName+user.firstName;
-      const existingUser = await this.userRepositroy.save(newuser); 
+    //transaction을 사용하여 유저 정보 저장
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    
+    try{
+      let existingUser = await this.userRepositroy.findByEmail(user.email);
+
+      if (!existingUser){
+        // 최초 가입자일 시 유저 정보 저장
+        const newuser = new User();
+        newuser.email = user.email;
+        newuser.nickname = user.lastName+user.firstName;
+        existingUser = await queryRunner.manager.save(User, newuser); 
+      }
+
+      // access token 생성, refresh token 생성 및 저장
+      const access_token = await this.generateAccessToken(existingUser.id);
+      const refresh_token = await this.updateRefresh(existingUser.id, queryRunner);
+
+      return { access_token, refresh_token };
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
-
-    // access token 생성, refresh token 생성 및 저장
-    const access_token = await this.generateAccessToken(existingUser.id);
-    const refresh_token = await this.updateRefresh(existingUser.id);
-
-    return { access_token, refresh_token };
   }
 
   async refreshTokens(refresh_token: string): Promise<TokensResponseDto> {
@@ -64,7 +80,7 @@ export class AuthService {
     return { access_token, refresh_token: new_refresh_token };
   }
 
-  private async updateRefresh(id: number): Promise<string> {
+  private async updateRefresh(id: number, queryRunner?: QueryRunner): Promise<string> {
     // payload에 user id와 type을 담아 refresh token 생성
     const payload = { id, type: 'refresh' };
 
@@ -74,7 +90,11 @@ export class AuthService {
     });
 
     // refresh token 저장
-    await this.userRepositroy.update(id, { refresh_token });
+    if(queryRunner){
+      await queryRunner.manager.update(User, {id}, { refresh_token });
+    } else{
+      await this.userRepositroy.update(id, { refresh_token });
+    }
 
     return refresh_token;
   }
