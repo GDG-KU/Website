@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Post, Query } from '@nestjs/common';
 import { EventService } from './service/event.service';
 import { CreateEventDto } from './dto/request/create-event.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -10,7 +10,7 @@ import { EventResponseDto } from './dto/response/event.response.dto';
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post("create")
+  @Post("")
   @ApiOperation({ summary: '일정 생성'})
   @ApiResponse({
     description: '일정 생성 성공',
@@ -26,17 +26,17 @@ export class EventController {
     return this.eventService.findAll();
   }
 
-  @Post("findByDate")
+  @Get("bydate")
   @ApiOperation({ summary: 'start_date와 end_date 사이에 있는 일정 조회'})
   @ApiResponse({
     description: '일정 조회 성공',
     type: [EventResponseDto],
   })
-  findByDate(@Body() findEventDto: FindEventDto) {
+  findByDate(@Query() findEventDto: FindEventDto) {
     return this.eventService.findByDate(findEventDto);
   }
 
-  @Delete("delete")
+  @Delete("")
   @ApiOperation({ summary: '일정 삭제'})
   deleteEvent(@Body() deleteEventDto: DeleteEventDto) {
     return this.eventService.deleteEvent(deleteEventDto.id);
