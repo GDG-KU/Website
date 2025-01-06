@@ -15,6 +15,7 @@ export class EventRepository extends Repository<Event> {
     const queryBuilder = this.repository.createQueryBuilder('event');
 
     queryBuilder.leftJoinAndSelect('event.tag', 'tag');
+    queryBuilder.leftJoinAndSelect('tag.tag_property', 'tag_property');
 
     /*
     WHERE (event.end_date >= :start_date

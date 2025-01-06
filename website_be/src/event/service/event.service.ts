@@ -6,7 +6,7 @@ import { EventResponseDto } from '../dto/response/event.response.dto';
 import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
 import { FindEventDto } from '../dto/request/find-event.dto';
-import { TagRepository } from 'src/tag/tag.repository';
+import { TagRepository } from 'src/tag/repository/tag.repository';
 
 
 @Injectable()
@@ -50,7 +50,7 @@ export class EventService {
     }
   }
 
-  findByDate(findEventDto: FindEventDto) {
+  findByDate(findEventDto: FindEventDto): Promise<EventResponseDto[]> {
     const {start_date, end_date} = findEventDto;
     return this.eventRepository.findByDate(start_date, end_date);
   }

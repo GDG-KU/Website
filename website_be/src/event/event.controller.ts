@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
 import { EventService } from './service/event.service';
 import { CreateEventDto } from './dto/request/create-event.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -36,9 +36,9 @@ export class EventController {
     return this.eventService.findByDate(findEventDto);
   }
 
-  @Delete("")
+  @Delete(":id")
   @ApiOperation({ summary: '일정 삭제'})
-  deleteEvent(@Body() deleteEventDto: DeleteEventDto) {
+  deleteEvent(@Param() deleteEventDto: DeleteEventDto) {
     return this.eventService.deleteEvent(deleteEventDto.id);
   }
 }

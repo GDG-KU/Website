@@ -1,12 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class TagUserDto {
-  @ApiProperty({
-    example: 1,
-    description: "tag_id",
-  })
-  tag_id: number;
-
+export class TagUsersDto {
   @ApiProperty({
     example: [1, 2],
     description: "user_ids",
