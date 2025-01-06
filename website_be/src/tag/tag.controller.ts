@@ -9,13 +9,13 @@ export class TagController {
     private readonly tagService: TagService,
   ) {}
 
-  @Get('findall')
+  @Get('all')
   @ApiOperation({ summary: '모든 태그 조회'})
   async findAll() {
     return await this.tagService.findAll();
   }
 
-  @Post("adduser")
+  @Post("user")
   @ApiOperation({ summary: '태그에 출석해야하는 user 추가 // 이미 있는 user 추사시 error + 존재하지 않는 tag나 user일 시 error'})
   async addUser(@Body() tagAddDto: TagUserDto) {
     return await this.tagService.addUser(tagAddDto);
