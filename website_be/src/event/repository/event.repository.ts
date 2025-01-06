@@ -11,6 +11,15 @@ export class EventRepository extends Repository<Event> {
     super(repository.target, repository.manager);
   }
 
+  async findTagUsersByEventId(event_id: number) {
+    const queryBuilder = this.repository.createQueryBuilder('event');
+
+    queryBuilder.leftJoinAndSelect('event.tag', 'tag');
+    queryBuilder.leftJoinAndSelect('tag.users', 'users');
+    queryBuilder.where('event.id = :event_id', { event_id });
+    return queryBuilder.getOne();
+  }
+
   findByDate(start_date: Date, end_date: Date) {
     const queryBuilder = this.repository.createQueryBuilder('event');
 

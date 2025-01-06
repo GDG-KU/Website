@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Tag } from "../../tag/entities/tag.entity";
+import { Attendance } from "./attendance.entity";
 
 @Entity({ schema: 'event', name: 'event' })
 export class Event {
@@ -24,4 +25,7 @@ export class Event {
     @ManyToOne(() => Tag, tag => tag.events)
     @JoinColumn({name : 'tag_id'})
     tag: Tag;
+
+    @OneToMany(() => Attendance, attendance => attendance.event)
+    attendances: Attendance[];
 }

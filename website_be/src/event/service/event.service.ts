@@ -7,6 +7,7 @@ import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
 import { FindEventDto } from '../dto/request/find-event.dto';
 import { TagRepository } from 'src/tag/repository/tag.repository';
+import { AttendanceRepository } from '../repository/attendance.repository';
 
 
 @Injectable()
@@ -14,6 +15,7 @@ export class EventService {
   constructor(
     private readonly eventRepository: EventRepository,
     private readonly tagRepository: TagRepository,
+    private readonly attendanceRepository: AttendanceRepository,
     private dataSource: DataSource,
   ) {}
 
@@ -48,6 +50,24 @@ export class EventService {
     else{
       return this.eventRepository.save({...eventData, tag: origintag});
     }
+  }
+
+  async setAttendance(event_id: number) {
+    const event = await this.eventRepository.findTagUsersByEventId(event_id);
+
+    if(!event){
+      throw new NotFoundException(`Event with ID ${event_id} not found.`);
+    }
+    if(!event.tag){
+      throw new NotFoundException(`Event with ID ${event_id} not have tag.`);
+    }
+    if(!event.tag.users){
+      throw new NotFoundException(`Tag with ID ${event.tag.id} not have users.`);
+    }
+
+    const users = event.tag.users;
+
+    return await this.attendanceRepository.setAttendance(event, users);
   }
 
   findByDate(findEventDto: FindEventDto): Promise<EventResponseDto[]> {

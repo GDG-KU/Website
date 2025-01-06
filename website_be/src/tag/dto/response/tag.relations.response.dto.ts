@@ -1,25 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Tag } from "src/tag/entities/tag.entity";
+import { UserInfoDto } from "src/user/dto/response/user.response.dto";
 
-class TagWithUserInfoDto {
-  @ApiProperty({
-    example: 1,
-    description: "ID",
-  })
-  id: number;
-
-  @ApiProperty({
-    example: "User nickname",
-    description: "Nickname",
-  })
-  nickname: string;
-
-  @ApiProperty({
-    example: "User point",
-    description: "Point",
-  })
-  point: number;
-}
 
 export class TagWithPropertyDto {
   @ApiProperty({
@@ -49,10 +31,10 @@ export class TagRelationsResponseDto {
   title: string;
 
   @ApiProperty({
-    type: () => [TagWithUserInfoDto],
+    type: () => [UserInfoDto],
     description: "User info",
   })
-  users: TagWithUserInfoDto[];
+  users: UserInfoDto[];
 
   @ApiProperty({
     type: () => TagWithPropertyDto,

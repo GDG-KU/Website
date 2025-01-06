@@ -10,7 +10,7 @@ import { EventResponseDto } from './dto/response/event.response.dto';
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post("")
+  @Post()
   @ApiOperation({ summary: '일정 생성'})
   @ApiResponse({
     description: '일정 생성 성공',
@@ -18,6 +18,12 @@ export class EventController {
   })
   createEvent(@Body() createEventDto: CreateEventDto) {
     return this.eventService.createEvent(createEventDto);
+  }
+
+  @Post(':event_id/attendance')
+  @ApiOperation({ summary: '일정 참석 여부 생성'})
+  setAttendance(@Param('event_id') event_id: number) {
+    return this.eventService.setAttendance(event_id);
   }
 
   @Get("all")
