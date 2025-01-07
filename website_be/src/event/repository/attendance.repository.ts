@@ -11,13 +11,16 @@ export class AttendanceRepository {
     @InjectRepository(Attendance) private readonly repository: Repository<Attendance>,
   ) {}
 
-  async setAttendance(event: Event, users: User[]) {
-    const userEvents = users.map(user => {
-      const userEvent = new Attendance();
-      userEvent.user = user;
-      userEvent.event = event;
-      return userEvent;
-    });
-    return await this.repository.save(userEvents);
+  async findOneByEventAndUser(event: Event, user: User) {
+    return await this.repository.findOne({where: {event, user}});
+  }
+
+  async findUsersByEvent(event_id: number) {
+    const queryBuilder = this.repository.createQueryBuilder('attendance');
+
+    queryBuilder.leftJoinAndSelect('attendance.user', 'user');
+    queryBuilder.where('attendance.event_id = :event_id', { event_id });
+
+    return queryBuilder.getMany();
   }
 }

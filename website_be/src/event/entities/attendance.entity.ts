@@ -1,8 +1,9 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Event } from "./event.entity";
 
 @Entity({ schema: 'attendance', name: 'attendance'})
+@Unique(['user', 'event'])
 export class Attendance{
   @PrimaryGeneratedColumn({name : 'id', type : 'int'})
   id: number;

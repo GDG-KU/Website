@@ -21,7 +21,7 @@ export class EventController {
   }
 
   @Post(':event_id/attendance')
-  @ApiOperation({ summary: '일정 참석 여부 생성'})
+  @ApiOperation({ summary: '일정 참석 여부 생성 및 동기화 // tag에 저장된 user정보를 attendance에 저장'})
   setAttendance(@Param('event_id') event_id: number) {
     return this.eventService.setAttendance(event_id);
   }
