@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Attendance } from "src/attendance/entities/attendance.entity";
 import { UserInfoDto } from "src/user/dto/response/user.response.dto";
-import { EventResponseDto } from "./event.response.dto";
 
 export class AttendanceResponseDto {
   @ApiProperty({
@@ -27,9 +27,16 @@ export class AttendanceResponseDto {
   })
   user: UserInfoDto;
 
-  @ApiProperty({
-    type: EventResponseDto,
-    description: "Event info",
-  })
-  event: EventResponseDto;
+  static of(attendance: Attendance) {
+    return {
+      id: attendance.id,
+      is_attend: attendance.is_attend,
+      reason: attendance.reason,
+      user: {
+        id: attendance.user.id,
+        nickname: attendance.user.nickname,
+        point: attendance.user.point,
+      }
+    }
+  }
 }

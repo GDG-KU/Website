@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Tag } from "../../tag/entities/tag.entity";
-import { Attendance } from "./attendance.entity";
+import { Attendance } from "../../attendance/entities/attendance.entity";
 
 @Entity({ schema: 'event', name: 'event' })
 export class Event {
