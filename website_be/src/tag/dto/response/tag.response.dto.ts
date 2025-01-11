@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { TagWithPropertyDto } from "./tag.relations.response.dto";
 
 export class TagResponseDto {
   @ApiProperty({
@@ -8,8 +9,14 @@ export class TagResponseDto {
   id: number;
 
   @ApiProperty({
-    example: "Event title",
+    example: "Tag title",
     description: "Title",
   })
   title: string;
+
+  @ApiProperty({
+    type: TagWithPropertyDto,
+    description: "Tag property",
+  })
+  tag_property: TagWithPropertyDto;
 }

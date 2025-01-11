@@ -3,6 +3,7 @@ import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, Pri
 import { Authority } from "./authority.entity";
 import { Role } from "./role.entity";
 import { Tag } from "src/tag/entities/tag.entity";
+import { Attendance } from "src/event/entities/attendance.entity";
 
 @Entity({ schema: 'user', name: 'user' })
 export class User {
@@ -37,4 +38,7 @@ export class User {
 
     @ManyToMany(() => Tag, tag => tag.users)
     tags: Tag[];
+
+    @OneToMany(() => Attendance, attendance => attendance.user)
+    attendances: Attendance[];
 }

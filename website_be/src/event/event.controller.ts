@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
 import { EventService } from './service/event.service';
 import { CreateEventDto } from './dto/request/create-event.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -10,7 +10,7 @@ import { EventResponseDto } from './dto/response/event.response.dto';
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post("")
+  @Post()
   @ApiOperation({ summary: '일정 생성'})
   @ApiResponse({
     description: '일정 생성 성공',
@@ -18,6 +18,12 @@ export class EventController {
   })
   createEvent(@Body() createEventDto: CreateEventDto) {
     return this.eventService.createEvent(createEventDto);
+  }
+
+  @Post(':event_id/attendance')
+  @ApiOperation({ summary: '일정 참석 여부 생성 및 동기화 // tag에 저장된 user정보를 attendance에 저장'})
+  setAttendance(@Param('event_id') event_id: number) {
+    return this.eventService.setAttendance(event_id);
   }
 
   @Get("all")
@@ -36,9 +42,9 @@ export class EventController {
     return this.eventService.findByDate(findEventDto);
   }
 
-  @Delete("")
+  @Delete(":id")
   @ApiOperation({ summary: '일정 삭제'})
-  deleteEvent(@Body() deleteEventDto: DeleteEventDto) {
+  deleteEvent(@Param() deleteEventDto: DeleteEventDto) {
     return this.eventService.deleteEvent(deleteEventDto.id);
   }
 }

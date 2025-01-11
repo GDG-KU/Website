@@ -6,7 +6,9 @@ import { EventResponseDto } from '../dto/response/event.response.dto';
 import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
 import { FindEventDto } from '../dto/request/find-event.dto';
-import { TagRepository } from 'src/tag/tag.repository';
+import { TagRepository } from 'src/tag/repository/tag.repository';
+import { AttendanceRepository } from '../repository/attendance.repository';
+import { Attendance } from '../entities/attendance.entity';
 
 
 @Injectable()
@@ -14,6 +16,7 @@ export class EventService {
   constructor(
     private readonly eventRepository: EventRepository,
     private readonly tagRepository: TagRepository,
+    private readonly attendanceRepository: AttendanceRepository,
     private dataSource: DataSource,
   ) {}
 
@@ -50,7 +53,51 @@ export class EventService {
     }
   }
 
-  findByDate(findEventDto: FindEventDto) {
+  async setAttendance(event_id: number) {
+    const event = await this.eventRepository.findTagUsersByEventId(event_id);
+
+    if(!event){
+      throw new NotFoundException(`Event with ID ${event_id} not found.`);
+    }
+    if(!event.tag){
+      throw new NotFoundException(`Event with ID ${event_id} not have tag.`);
+    }
+    if(!event.tag.users){
+      throw new NotFoundException(`Tag with ID ${event.tag.id} not have users.`);
+    }
+
+    const users = event.tag.users;
+    const existingAttendances = await this.attendanceRepository.findUsersByEvent(event_id);
+    const existingUserIds = existingAttendances.map(attendance => attendance.user.id);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      for (let user of users) {
+        if (!existingUserIds.includes(user.id)) {
+          await queryRunner.manager.save(Attendance, {event, user});
+        }
+      }
+      for (let user_id of existingUserIds) {
+        if (!users.some(user => user.id === user_id)) {
+          await queryRunner.manager.delete(Attendance, {event: event_id, user: user_id});
+        }
+      }
+
+      await queryRunner.commitTransaction();
+      return {message: `Attendance for event with ID ${event_id} has been successfully set.`};
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  findByDate(findEventDto: FindEventDto): Promise<EventResponseDto[]> {
     const {start_date, end_date} = findEventDto;
     return this.eventRepository.findByDate(start_date, end_date);
   }

@@ -2,6 +2,8 @@ import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Event } from "../entities/event.entity";
+import { User } from "src/user/entities/user.entity";
+import { Attendance } from "../entities/attendance.entity";
 
 @Injectable()
 export class EventRepository extends Repository<Event> {
@@ -11,10 +13,20 @@ export class EventRepository extends Repository<Event> {
     super(repository.target, repository.manager);
   }
 
+  async findTagUsersByEventId(event_id: number) {
+    const queryBuilder = this.repository.createQueryBuilder('event');
+
+    queryBuilder.leftJoinAndSelect('event.tag', 'tag');
+    queryBuilder.leftJoinAndSelect('tag.users', 'users');
+    queryBuilder.where('event.id = :event_id', { event_id });
+    return queryBuilder.getOne();
+  }
+
   findByDate(start_date: Date, end_date: Date) {
     const queryBuilder = this.repository.createQueryBuilder('event');
 
     queryBuilder.leftJoinAndSelect('event.tag', 'tag');
+    queryBuilder.leftJoinAndSelect('tag.tag_property', 'tag_property');
 
     /*
     WHERE (event.end_date >= :start_date
