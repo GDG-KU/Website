@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Event } from "../entities/event.entity";
 import { User } from "src/user/entities/user.entity";
-import { Attendance } from "../entities/attendance.entity";
+import { Attendance } from "../../attendance/entities/attendance.entity";
 
 @Injectable()
 export class EventRepository extends Repository<Event> {

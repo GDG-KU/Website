@@ -7,8 +7,8 @@ import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
 import { FindEventDto } from '../dto/request/find-event.dto';
 import { TagRepository } from 'src/tag/repository/tag.repository';
-import { AttendanceRepository } from '../repository/attendance.repository';
-import { Attendance } from '../entities/attendance.entity';
+import { AttendanceRepository } from '../../attendance/repository/attendance.repository';
+import { Attendance } from '../../attendance/entities/attendance.entity';
 
 
 @Injectable()
