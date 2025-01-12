@@ -18,6 +18,8 @@ import { TagProperty } from 'src/tag/entities/tag_property.entity';
 import { TagModule } from 'src/tag/tag.module';
 import { AttendanceModule } from 'src/attendance/attendance.module';
 import { Attendance } from 'src/attendance/entities/attendance.entity';
+import { MypageModule } from 'src/mypage/mypage.module';
+import { History } from 'src/mypage/entities/history.entity'; 
 
 @Module({
   imports: [
@@ -32,7 +34,7 @@ import { Attendance } from 'src/attendance/entities/attendance.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance], 
+      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History], 
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
       charset: 'utf8mb4',
@@ -47,6 +49,7 @@ import { Attendance } from 'src/attendance/entities/attendance.entity';
     EventModule,
     TagModule,
     AttendanceModule,
+    MypageModule,
   ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],
