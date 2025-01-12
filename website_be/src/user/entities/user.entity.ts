@@ -36,9 +36,6 @@ export class User {
     @CreateDateColumn()
     created_at: Date;
 
-    @ManyToMany(() => Tag, tag => tag.users)
-    tags: Tag[];
-
     @OneToMany(() => Attendance, attendance => attendance.user)
     attendances: Attendance[];
 }

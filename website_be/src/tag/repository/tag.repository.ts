@@ -12,45 +12,10 @@ export class TagRepository extends Repository<Tag> {
   }
 
 
-  async findByTitle(title: string) {
-    return await this.repository.findOne({where: {title}});
+  async findById(id: number) {
+    return await this.repository.findOne({where: {id}});
   }
 
-  async addUser(user_ids: number[], tag_id: number) {
-    const existingTag = await this.repository.findOne({where: {id: tag_id}, relations: ['users']});
-    
-    if (!existingTag) {
-      throw new BadRequestException('Tag not found');
-    }
-
-    const queryBuilder = this.repository.createQueryBuilder();
-
-    const existingUser = existingTag.users;
-    const existingUserIds = existingUser.map(user => user.id);
-
-    const new_user_ids = user_ids.filter(user_id => !existingUserIds.includes(user_id));
-
-    if (new_user_ids.length === 0) {
-      throw new BadRequestException('All users already exist');
-    }
-
-    try {
-      return await queryBuilder
-        .relation(Tag, 'users')
-        .of(tag_id)
-        .add(new_user_ids);
-    }
-    catch (err) {
-      throw new BadRequestException('Invalid user id');
-    }
-  }
-
-  async removeUser(user_ids: number[], tag_id: number) {
-    return await this.repository.createQueryBuilder()
-      .relation(Tag, 'users')
-      .of(tag_id)
-      .remove(user_ids);
-  }
 
   async setProperty(tag_id: number, property_id: number) {
     const existingTag = await this.repository.findOne({where: {id: tag_id}, relations: ['tag_property']});

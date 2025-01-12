@@ -17,8 +17,4 @@ export class Tag {
   @ManyToOne(() => TagProperty, tag_property => tag_property.tags)
   @JoinColumn({name : 'tag_property_id'})
   tag_property: TagProperty;
-
-  @ManyToMany(() => User, user => user.tags)
-  @JoinTable({name : 'user_tag'})
-  users: User[];
 }

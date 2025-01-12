@@ -30,11 +30,6 @@ export class TagRelationsResponseDto {
   })
   title: string;
 
-  @ApiProperty({
-    type: () => [UserInfoDto],
-    description: "User info",
-  })
-  users: UserInfoDto[];
 
   @ApiProperty({
     type: () => TagWithPropertyDto,
@@ -46,11 +41,6 @@ export class TagRelationsResponseDto {
     return {
       id: tag.id,
       title: tag.title,
-      users: tag.users.map(user => ({
-        id: user.id,
-        nickname: user.nickname,
-        point: user.point,
-      })),
       tag_property: tag.tag_property 
       ? {
           id: tag.tag_property.id,

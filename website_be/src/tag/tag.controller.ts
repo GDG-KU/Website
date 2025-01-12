@@ -20,17 +20,6 @@ export class TagController {
     return await this.tagService.findAll();
   }
 
-  @Post(":tag_id/users")
-  @ApiOperation({ summary: '태그에 출석해야하는 user 추가 // 이미 있는 user 추가시 error + 존재하지 않는 tag나 user일 시 error'})
-  async addUser(@Param('tag_id') id:number, @Body() tagUsersDto: TagUsersDto) {
-    return await this.tagService.addUser(id, tagUsersDto);
-  }
-
-  @Delete(":tag_id/users")
-  @ApiOperation({ summary: '태그에 출석해야하는 user 삭제'})
-  async deleteUser(@Param('tag_id') id:number, @Body() tagUsersDto: TagUsersDto) {
-    return await this.tagService.deleteUser(id, tagUsersDto);
-  }
 
   @Post(":tag_id/property/:property_id")
   @ApiOperation({ summary: '태그 속성 설정'})
