@@ -15,15 +15,6 @@ export class TagService {
     return tags.map(tag => TagRelationsResponseDto.of(tag));
   }
 
-  async addUser(id: number, tagUsersDto: TagUsersDto) {
-    const {user_ids} = tagUsersDto;
-    return await this.tagRepository.addUser(user_ids, id);
-  }
-
-  async deleteUser(id: number, tagUsersDto: TagUsersDto) {
-    const {user_ids} = tagUsersDto;
-    return await this.tagRepository.removeUser(user_ids, id);
-  }
 
   async setProperty(tag_id: number, property_id: number) {
     return await this.tagRepository.setProperty(tag_id, property_id);

@@ -32,8 +32,8 @@ export class CreateEventDto {
   url: string;
 
   @ApiProperty({
-    example: "branch/fe",
-    description: "Tag",
+    example: "1",
+    description: "Tag_id",
   })
-  tag: string;
+  tag_id: number;
 }
