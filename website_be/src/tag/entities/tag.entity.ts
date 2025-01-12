@@ -8,13 +8,13 @@ export class Tag {
   @PrimaryGeneratedColumn({name : 'id', type : 'int'})
   id: number;
 
-  @Column({name : 'title', type : 'varchar', length : 64})
+  @Column({name : 'title', type : 'varchar', length : 64, nullable : false})
   title: string;
 
   @OneToMany(() => Event, event => event.tag, {cascade : true})
   events: Event[];
 
-  @ManyToOne(() => TagProperty, tag_property => tag_property.tags)
+  @ManyToOne(() => TagProperty, tag_property => tag_property.tags, {nullable : false})
   @JoinColumn({name : 'tag_property_id'})
   tag_property: TagProperty;
 }

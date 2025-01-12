@@ -11,11 +11,9 @@ export class NoticeRepository extends Repository<Notice> {
         super(repository.target, repository.manager);
     }
 
-    async findAllNotice(skip: number, take: number, viewer: number) {
+    async findAllNotice(skip: number, take: number) {
         const queryBuilder = this.repository.createQueryBuilder('notice');
-        queryBuilder.leftJoin('notice.role', 'role');
-        queryBuilder.where('role.id >= :viewer', { viewer });
-        queryBuilder.select(['notice.id', 'notice.title', 'notice.created_at', 'role.role_type']);
+        queryBuilder.select(['notice.id', 'notice.title', 'notice.content', 'notice.created_at']);
         queryBuilder.orderBy('notice.created_at', 'DESC');
         queryBuilder.skip(skip).take(take);
         
@@ -24,7 +22,7 @@ export class NoticeRepository extends Repository<Notice> {
     }
 
     async findById(id: number){
-        return await this.repository.findOne({where: {id}, relations: ['role']});
+        return await this.repository.findOne({where: {id}});
     }
     
 

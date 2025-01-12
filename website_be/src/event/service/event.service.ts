@@ -26,7 +26,7 @@ export class EventService {
     const {tag_id, ...eventData} = createEventDto;
     const origintag = await this.tagRepository.findById(tag_id); //기존 tag가 있는지 확인
     
-    //tag가 있다면 event만 생성
+    //tag가 없다면 에러
     if (!origintag) {
       throw new NotFoundException(`Tag with ID ${tag_id} not found.`);
     }
@@ -40,7 +40,7 @@ export class EventService {
     await queryRunner.startTransaction();
 
     try{
-      const event = await this.eventRepository.save(eventData);
+      const event = await queryRunner.manager.save(Event, {...eventData, tag: origintag});
 
       await this.attendanceRepository.upsertAttendance(event.id, user_ids, queryRunner);
       await queryRunner.commitTransaction();

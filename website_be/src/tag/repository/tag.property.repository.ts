@@ -11,6 +11,10 @@ export class TagPropertyRepository extends Repository<TagProperty> {
     super(repository.target, repository.manager);
   }
 
+  async findById(id: number) {
+    return await this.repository.findOne({where: {id}});
+  }
+
   async createTagProperty(property: string) {
     const existingTagProperty = await this.repository.findOne({where: {tag_property: property}});
 

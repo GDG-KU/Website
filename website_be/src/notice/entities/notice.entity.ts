@@ -7,20 +7,16 @@ export class Notice {
     @PrimaryGeneratedColumn({name : 'id', type : 'int'})
     id: number;
 
-    @Column({name : 'title', type : 'varchar', length : 64})
+    @Column({name : 'title', type : 'varchar', length : 64, nullable : false})
     title: string;
 
     @Column({name : 'content', type : 'varchar', length : 2048})
     content: string;
 
-    @ManyToOne(() => User, user => user.notices)
+    @ManyToOne(() => User, user => user.notices, {nullable : false})
     @JoinColumn({name : 'user_id'})
     user: User;
 
-    @ManyToOne(() => Role, role => role.notices)
-    @JoinColumn({name : 'role_id'})
-    role: Role;
-
-    @CreateDateColumn()
+    @CreateDateColumn({name : 'created_at', type : 'timestamp'})
     created_at: Date;
 }

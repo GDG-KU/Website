@@ -19,12 +19,4 @@ export class CreateNoticeDto {
     @IsString()
     @IsNotEmpty()
     content: string;
-
-    @ApiProperty({
-        example: 'lead',
-        description: 'Viewer role',
-    })
-    @IsNotEmpty()
-    @Transform(({ value }) => getRoleByName(value))
-    role_id: number;
 }

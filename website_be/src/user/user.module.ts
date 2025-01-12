@@ -7,9 +7,10 @@ import { Role } from './entities/role.entity';
 import { Authority } from './entities/authority.entity';
 import { UserRepository } from './user.repository';
 import { RoleRepository } from './role.repository';
+import { Position } from './entities/position.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Authority, Role])],
+  imports: [TypeOrmModule.forFeature([User, Authority, Role, Position])],
   controllers: [UserController],
   providers: [UserService, UserRepository, RoleRepository],
   exports: [UserRepository, RoleRepository],

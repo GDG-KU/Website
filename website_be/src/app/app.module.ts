@@ -20,6 +20,7 @@ import { AttendanceModule } from 'src/attendance/attendance.module';
 import { Attendance } from 'src/attendance/entities/attendance.entity';
 import { MypageModule } from 'src/mypage/mypage.module';
 import { History } from 'src/mypage/entities/history.entity'; 
+import { Position } from 'src/user/entities/position.entity';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { History } from 'src/mypage/entities/history.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History], 
+      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History, Position], 
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
       charset: 'utf8mb4',
