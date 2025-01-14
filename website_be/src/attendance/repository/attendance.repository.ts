@@ -30,6 +30,8 @@ export class AttendanceRepository extends Repository<Attendance> {
     const queryBuilder = this.repository.createQueryBuilder('attendance');
 
     queryBuilder.leftJoinAndSelect('attendance.user', 'user');
+    queryBuilder.leftJoinAndSelect('user.user_roles', 'user_role');
+    queryBuilder.leftJoinAndSelect('user_role.role', 'role');
     queryBuilder.where('attendance.event_id = :event_id', { event_id });
 
     return queryBuilder.getMany();

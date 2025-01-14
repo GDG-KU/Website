@@ -18,16 +18,14 @@ export class NoticeController {
 
   @Get()
   @ApiOperation({ summary: 'Get all notice' })
-  findAllNotice(@Query('page') page: number = 1) {
-    const viewer = 1;
-    return this.noticeService.findAllNotice(viewer, page);
+  findAllNotice(@Query('page') page: number) {
+    return this.noticeService.findNoticePaging(page);
   }
 
   @Get('detail/:id')
   @ApiOperation({ summary: 'Get a notice detail' })
   findDetailNotice(@Param('id') id: number) {
-    const viewer = 1;
-    return this.noticeService.findDetailNotice(viewer, +id);
+    return this.noticeService.findDetailNotice(id);
   }
 
   @Patch()

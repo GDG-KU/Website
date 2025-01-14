@@ -3,40 +3,38 @@ import { NoticeRepository } from './notice.repository';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
 import { Notice } from './entities/notice.entity';
-import { RoleRepository } from 'src/user/role.repository';
+import { UserRepository } from 'src/user/repository/user.repository';
 
 @Injectable()
 export class NoticeService {
     constructor(
       private readonly noticeRepository: NoticeRepository,
-      private readonly roleRepository: RoleRepository,
+      private readonly userRepository: UserRepository,
     ) {}
 
     async create(creator: number, createNoticeDto: CreateNoticeDto) {
       if (creator > 2) {
         throw new UnauthorizedException('You are not authorized to create a notice'); // not authorized
       }
-
-      const role = await this.roleRepository.findById(createNoticeDto.role_id);
       const notice = new Notice();
-
+      const user = await this.userRepository.findById(1);
 
       notice.title = createNoticeDto.title;
       notice.content = createNoticeDto.content;
-      notice.role = role;
+      notice.user = user;
 
       return this.noticeRepository.save(notice);
     }
 
-    async findAllNotice(viewer: number, page: number) {
+    async findNoticePaging(page: number) {
       if (page < 1) {
         page = 1; // default page is 1
       } 
 
-      const take = 10; // take is 3
+      const take = 10; // take is 10
       const skip = (page - 1) * take; // default skip is 0
 
-      const [notices, total] = await this.noticeRepository.findAllNotice(skip, take, viewer);
+      const [notices, total] = await this.noticeRepository.findNoticePaging(skip, take);
       const totalPage = Math.ceil((total as number) / take);
 
       return {
@@ -45,14 +43,11 @@ export class NoticeService {
       }
     }
 
-    async findDetailNotice(viewer: number, id: number) {
+    async findDetailNotice(id: number) {
       const notice = await this.noticeRepository.findById(id);
       
       if (!notice) {
         throw new NotFoundException('Notice not found'); // notice not found
-      }
-      if (notice.role.id < viewer) {
-        throw new UnauthorizedException('You are not authorized to view this notice'); // not authorized
       }
 
       return notice;
@@ -63,13 +58,11 @@ export class NoticeService {
         throw new UnauthorizedException('You are not authorized to update a notice'); // not authorized
       }
 
-      const role = await this.roleRepository.findById(UpdateNoticeDto.role_id);
       const notice = new Notice();
 
 
       notice.title = UpdateNoticeDto.title;
       notice.content = UpdateNoticeDto.content;
-      notice.role = role;
 
       return this.noticeRepository.update(UpdateNoticeDto.id, notice);
     }

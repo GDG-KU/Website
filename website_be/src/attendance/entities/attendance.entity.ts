@@ -8,15 +8,15 @@ export class Attendance{
   @PrimaryGeneratedColumn({name : 'id', type : 'int'})
   id: number;
 
-  @ManyToOne(() => User, user => user.attendances)
+  @ManyToOne(() => User, user => user.attendances, {nullable : false, onDelete : 'CASCADE', cascade : true})
   @JoinColumn({name : 'user_id'})
   user: User;
 
-  @ManyToOne(() => Event, event => event.attendances) 
+  @ManyToOne(() => Event, event => event.attendances, {nullable : false, onDelete : 'CASCADE', cascade : true}) 
   @JoinColumn({name : 'event_id'})
   event: Event;
 
-  @Column({name : 'is_attend', type : 'boolean', default : false})
+  @Column({name : 'is_attend', type : 'boolean', default : false, nullable : false})
   is_attend: boolean;
 
   @Column({name : 'reason', type : 'varchar', length : 128, default: ''})

@@ -32,7 +32,7 @@ export class CreateEventDto {
   url: string;
 
   @ApiProperty({
-    example: "1",
+    example: 1,
     description: "Tag_id",
   })
   tag_id: number;

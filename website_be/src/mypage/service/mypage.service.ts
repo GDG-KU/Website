@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { HistoryRepository } from "../repository/history.repository";
-import { UserRepository } from "src/user/user.repository";
+import { UserRepository } from "src/user/repository/user.repository";
 import { MypageProfileResponseDto } from "../dto/response/mypage-profile.response.dto";
 import { MypageHistoryResponseDto } from "../dto/response/mypage-history.response.dto";
 import { UpdateUserDto } from "../dto/request/mypage-profile.request.dto";
@@ -21,13 +21,12 @@ export class MypageService {
     }
 
     // roles가 undefined인 경우 빈 배열로 처리
-    const role = user.roles ? user.roles.map(role => role.role_type).join(" / ") : "Role 연결 실패";
+    const role = user.user_roles ? user.user_roles.map(user_role => user_role.role.role_type).join(" / ") : "Role 연결 실패";
 
     return {
       nickname: user.nickname,
       role: role,
-      joinDate: user.created_at.toISOString().split("T")[0],
-      totalPoints: user.point,
+      joinDate: user.created_at.toISOString().split("T")[0]
     };
   }
   

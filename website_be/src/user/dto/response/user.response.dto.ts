@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { RolePointResponseDto } from "./rolepoint.reponse.dto";
 
-export class UserInfoDto {
+
+export class UserInfoResponseDto {
   @ApiProperty({
     example: 1,
     description: "ID",
@@ -14,8 +16,8 @@ export class UserInfoDto {
   nickname: string;
 
   @ApiProperty({
-    example: "User point",
-    description: "Point",
+    type: [RolePointResponseDto],
+    description: "Role and Point",
   })
-  point: number;
+  roles: RolePointResponseDto[];
 }

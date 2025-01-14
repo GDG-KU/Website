@@ -3,10 +3,11 @@ import { BadRequestException } from "@nestjs/common";
 export enum Role {
     organizer = 1,
     lead = 2,
-    devrel = 3,
-    member= 4,
-    junior = 5,
-    guest = 6,
+    core = 3,
+    devrel = 4,
+    member= 5,
+    junior = 6,
+    guest = 7,
 }
 
 

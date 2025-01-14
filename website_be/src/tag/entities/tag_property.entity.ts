@@ -6,7 +6,7 @@ export class TagProperty {
   @PrimaryGeneratedColumn({name : 'id', type : 'int'})
   id: number;
 
-  @Column({name : 'tag_property', type : 'varchar', length : 64, unique: true})
+  @Column({name : 'tag_property', type : 'varchar', length : 64, unique: true, nullable : false})
   tag_property: string;
 
   @OneToMany(() => Tag, tag => tag.tag_property, {cascade : true})
