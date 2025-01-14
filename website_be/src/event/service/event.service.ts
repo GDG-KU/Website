@@ -9,7 +9,7 @@ import { FindEventDto } from '../dto/request/find-event.dto';
 import { TagRepository } from 'src/tag/repository/tag.repository';
 import { AttendanceRepository } from '../../attendance/repository/attendance.repository';
 import { Attendance } from '../../attendance/entities/attendance.entity';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from 'src/user/repository/user.repository';
 
 
 @Injectable()

@@ -11,9 +11,9 @@ export class NoticeRepository extends Repository<Notice> {
         super(repository.target, repository.manager);
     }
 
-    async findAllNotice(skip: number, take: number) {
+    async findNoticePaging(skip: number, take: number) {
         const queryBuilder = this.repository.createQueryBuilder('notice');
-        queryBuilder.select(['notice.id', 'notice.title', 'notice.content', 'notice.created_at']);
+        queryBuilder.select(['notice.id', 'notice.title', 'notice.created_at']);
         queryBuilder.orderBy('notice.created_at', 'DESC');
         queryBuilder.skip(skip).take(take);
         

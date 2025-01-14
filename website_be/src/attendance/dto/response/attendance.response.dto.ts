@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Attendance } from "src/attendance/entities/attendance.entity";
-import { UserInfoDto } from "src/user/dto/response/user.response.dto";
+import { UserInfoResponseDto } from "src/user/dto/response/user.response.dto";
 
 export class AttendanceResponseDto {
   @ApiProperty({
@@ -22,10 +22,10 @@ export class AttendanceResponseDto {
   reason: string;
 
   @ApiProperty({
-    type: UserInfoDto,
+    type: UserInfoResponseDto,
     description: "User info",
   })
-  user: UserInfoDto;
+  user: UserInfoResponseDto;
 
   static of(attendance: Attendance) {
     return {
@@ -35,7 +35,12 @@ export class AttendanceResponseDto {
       user: {
         id: attendance.user.id,
         nickname: attendance.user.nickname,
-        point: attendance.user.point,
+        roles: attendance.user.user_roles.map((user_role) => {
+          return {
+            role: user_role.role.role_type,
+            point: user_role.point,
+          };
+        })
       }
     }
   }

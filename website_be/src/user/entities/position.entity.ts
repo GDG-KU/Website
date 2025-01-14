@@ -2,10 +2,14 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 
-// 1, FE
-// 2, BE
-// 3, AI
-// 4, DSGN
+/*
+INSERT INTO position (id, name)
+VALUES 
+(1, 'FE'),
+(2, 'BE'),
+(3, 'AI'),
+(4, 'DSGN');
+*/
 
 @Entity({ schema: 'position', name: 'position' })
 export class Position {

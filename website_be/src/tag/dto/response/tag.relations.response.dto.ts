@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Tag } from "src/tag/entities/tag.entity";
-import { UserInfoDto } from "src/user/dto/response/user.response.dto";
 
 
 export class TagWithPropertyDto {

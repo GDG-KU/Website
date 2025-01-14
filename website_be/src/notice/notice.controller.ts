@@ -19,7 +19,7 @@ export class NoticeController {
   @Get()
   @ApiOperation({ summary: 'Get all notice' })
   findAllNotice(@Query('page') page: number) {
-    return this.noticeService.findAllNotice(page);
+    return this.noticeService.findNoticePaging(page);
   }
 
   @Get('detail/:id')

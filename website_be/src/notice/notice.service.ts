@@ -3,7 +3,7 @@ import { NoticeRepository } from './notice.repository';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
 import { Notice } from './entities/notice.entity';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from 'src/user/repository/user.repository';
 
 @Injectable()
 export class NoticeService {
@@ -26,7 +26,7 @@ export class NoticeService {
       return this.noticeRepository.save(notice);
     }
 
-    async findAllNotice(page: number) {
+    async findNoticePaging(page: number) {
       if (page < 1) {
         page = 1; // default page is 1
       } 
@@ -34,7 +34,7 @@ export class NoticeService {
       const take = 10; // take is 10
       const skip = (page - 1) * take; // default skip is 0
 
-      const [notices, total] = await this.noticeRepository.findAllNotice(skip, take);
+      const [notices, total] = await this.noticeRepository.findNoticePaging(skip, take);
       const totalPage = Math.ceil((total as number) / take);
 
       return {

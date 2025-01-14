@@ -22,7 +22,7 @@ export class CreateUserDto{
   student_number: string;
 
   @ApiProperty({
-    example: '1'
+    example: ['1', '4']
   })
-  role_id: number;
+  role_ids: number[];
 }

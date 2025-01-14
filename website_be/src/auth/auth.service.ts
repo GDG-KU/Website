@@ -3,7 +3,7 @@ import { User } from 'src/user/entities/user.entity';
 import { TokensResponseDto } from './dto/response/tokens.response.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from 'src/user/repository/user.repository';
 import { DataSource, QueryRunner } from 'typeorm';
 
 @Injectable()

@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.entity";
-import { Notice } from "src/notice/entities/notice.entity";
+import { User_role } from "./user_role.entity";
 
 
 /*
@@ -23,7 +22,6 @@ export class Role {
     @Column({name : 'role_type', type : 'varchar', length : 64, nullable : false})
     role_type: string;
 
-    @ManyToMany(() => User, user => user.roles)
-    @JoinTable({name : 'user_role'})
-    users: User[];
+    @OneToMany(() => User_role, user_role => user_role.role)
+    user_roles: User_role[];
 }

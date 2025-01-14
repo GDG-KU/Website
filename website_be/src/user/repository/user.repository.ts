@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
-import { User } from "./entities/user.entity";
+import { User } from "../entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { CreateUserDto } from "../dto/request/create-user.dto";
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -10,6 +11,14 @@ export class UserRepository extends Repository<User> {
   ) {
     super(repository.target, repository.manager);
   } 
+
+
+  async findAll(){
+    const queryBuilder = this.repository.createQueryBuilder('user');
+    queryBuilder.leftJoinAndSelect('user.user_roles', 'user_role');
+    queryBuilder.leftJoinAndSelect('user_role.role', 'role');
+    return queryBuilder.getMany();
+  }
 
   async findById(id: number){
     return await this.repository.findOne({where: {id}});

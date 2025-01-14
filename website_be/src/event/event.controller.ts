@@ -27,7 +27,7 @@ export class EventController {
   }
 
   @Get("all")
-  @ApiOperation({ summary: '모든 일정 조회'})
+  @ApiOperation({ summary: '모든 일정 조회 // 개발용'})
   findAll() {
     return this.eventService.findAll();
   }
