@@ -8,9 +8,10 @@ import { TagController } from "./tag.controller";
 import { TagPropertyService } from "./service/tag.property.service";
 import { TagPropertyRepository } from "./repository/tag.property.repository";
 import { TagPropertyController } from "./tag.property.controller";
+import { UserModule } from "src/user/user.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tag, TagProperty])],
+  imports: [TypeOrmModule.forFeature([Tag, TagProperty]), UserModule],
   controllers: [TagController, TagPropertyController],
   providers: [TagService, TagRepository, TagPropertyService, TagPropertyRepository],
   exports: [TagRepository],

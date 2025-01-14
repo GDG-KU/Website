@@ -13,7 +13,34 @@ export class TagRepository extends Repository<Tag> {
 
 
   async findById(id: number) {
-    return await this.repository.findOne({where: {id}});
+    return await this.repository.findOne({where: {id}, relations: ['tag_property']});
+  }
+
+  async addUser(user_ids: number[], tag: Tag) {
+    const queryBuilder = this.repository.createQueryBuilder();
+    const existingUser = tag.users;
+    const existingUserIds = existingUser.map(user => user.id);
+    const new_user_ids = user_ids.filter(user_id => !existingUserIds.includes(user_id));
+    
+    if (new_user_ids.length === 0) {
+      throw new BadRequestException('All users already exist');
+    }
+    try {
+      return await queryBuilder
+        .relation(Tag, 'users')
+        .of(tag.id)
+        .add(new_user_ids);
+    }
+    catch (err) {
+      throw new BadRequestException('Invalid user id');
+    }
+  }
+
+  async removeUser(user_ids: number[], tag_id: number) {
+    return await this.repository.createQueryBuilder()
+      .relation(Tag, 'users')
+      .of(tag_id)
+      .remove(user_ids);
   }
 
 
