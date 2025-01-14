@@ -33,11 +33,11 @@ export class User {
     @Column({name : 'point', type : 'int', default : 0, nullable : false})
     point: number;
 
-    @Column({name : 'department', type : 'varchar', nullable : false})
-    department: string;
+    @Column({name : 'department', type : 'varchar'})
+    department: string | null;
 
-    @Column({name : 'student_number', type : 'varchar', nullable : false, unique : true})
-    student_number: string;
+    @Column({name : 'student_number', type : 'varchar', unique : true})
+    student_number: string | null;
 
     @Column({name : 'profile_image', type : 'varchar', nullable : true})
     profile_image: string;
