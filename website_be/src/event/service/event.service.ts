@@ -30,30 +30,26 @@ export class EventService {
     if (!origintag) {
       throw new NotFoundException(`Tag with ID ${tag_id} not found.`);
     }
-    if (origintag.tag_property.tag_property === 'fetch') {
-      const users = await this.userRepositroy.find();
-      const user_ids = users.map(user => user.id)
 
-      const queryRunner = this.dataSource.createQueryRunner();
+    
+    const queryRunner = this.dataSource.createQueryRunner();
 
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-      try{
-        const event = await queryRunner.manager.save(Event, {...eventData, tag: origintag});
+    try{
+      const event = await queryRunner.manager.save(Event, {...eventData, tag: origintag});
+      const user_ids = origintag.users.map(user => user.id);
 
-        await this.attendanceRepository.upsertAttendance(event.id, user_ids, queryRunner);
-        await queryRunner.commitTransaction();
+      await this.attendanceRepository.upsertAttendance(event.id, user_ids, queryRunner);
+      await queryRunner.commitTransaction();
 
-        return event;
-      } catch (err) {
-        await queryRunner.rollbackTransaction();
-        throw err;
-      } finally {
-        await queryRunner.release();
-      }
-    } else {
-      return await this.eventRepository.save({...eventData, tag: origintag});
+      return EventResponseDto.of(event);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
   }
 

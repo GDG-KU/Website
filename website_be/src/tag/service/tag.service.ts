@@ -5,6 +5,9 @@ import { TagResponseDto } from "../dto/response/tag.response.dto";
 import { UserIdsDto } from "src/user/dto/request/user_ids.dto";
 import { TagRelationsResponseDto } from "../dto/response/tag.relations.response.dto";
 import { UserRepository } from "src/user/repository/user.repository";
+import { DataSource } from "typeorm";
+import { query } from "express";
+import { Tag } from "../entities/tag.entity";
 
 @Injectable()
 export class TagService {
@@ -12,6 +15,7 @@ export class TagService {
     private readonly tagRepository: TagRepository,
     private readonly tagPropertyRepository: TagPropertyRepository,
     private readonly userRepository: UserRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async findAll(): Promise<TagResponseDto[]> {
@@ -60,7 +64,34 @@ export class TagService {
       throw new BadRequestException('Property not found');
     }
 
-    return await this.tagRepository.save({title, tag_property: existingProperty});
+    if (existingProperty.tag_property === 'fetch') {
+      const queryRunner = this.dataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      try {
+        const tag = await queryRunner.manager.save(Tag, {title, tag_property: existingProperty});
+        const users = await this.userRepository.find();
+        
+        const user_ids = users.map(user => user.id);
+
+        await this.tagRepository.setAllUsers(user_ids, tag.id, queryRunner);
+        await queryRunner.commitTransaction();
+
+        return tag;
+      } catch (err) {
+        await queryRunner.rollbackTransaction();
+        throw err;
+      } finally {
+        await queryRunner.release();
+      }
+
+
+    }
+    else{
+      return await this.tagRepository.save({title, tag_property: existingProperty});
+    }
   }
 
 

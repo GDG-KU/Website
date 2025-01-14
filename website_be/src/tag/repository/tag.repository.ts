@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, QueryRunner, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Tag } from "../entities/tag.entity";
 
@@ -13,7 +13,7 @@ export class TagRepository extends Repository<Tag> {
 
 
   async findById(id: number) {
-    return await this.repository.findOne({where: {id}, relations: ['tag_property']});
+    return await this.repository.findOne({where: {id}, relations: ['tag_property', 'users']});
   }
 
   async addUser(user_ids: number[], tag: Tag) {
@@ -41,6 +41,22 @@ export class TagRepository extends Repository<Tag> {
       .relation(Tag, 'users')
       .of(tag_id)
       .remove(user_ids);
+  }
+
+  async setAllUsers(user_ids: number[], tag_id: number, queryRunner: QueryRunner) {
+    try{
+      for (const user_id of user_ids) {
+        await queryRunner.manager.query(
+          `
+          INSERT INTO \`user_tag\` (\`user_id\`, \`tag_id\`)
+          VALUES (?, ?)
+          `,
+          [user_id, tag_id]
+        );
+      }
+    }catch (err) {
+      throw err;
+    }
   }
 
 

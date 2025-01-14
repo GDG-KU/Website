@@ -19,6 +19,16 @@ export class Tag {
   tag_property: TagProperty;
 
   @ManyToMany(() => User, user => user.tags)
-  @JoinTable({name : 'user_tag'})
+  @JoinTable({
+    name : 'user_tag',
+    joinColumn : {
+      name : 'tag_id',
+      referencedColumnName : 'id'
+    },
+    inverseJoinColumn : {
+      name : 'user_id',
+      referencedColumnName : 'id'
+    }
+  })
   users: User[];
 }
