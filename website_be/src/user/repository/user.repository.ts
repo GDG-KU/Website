@@ -21,7 +21,11 @@ export class UserRepository extends Repository<User> {
   }
 
   async findById(id: number){
-    return await this.repository.findOne({where: {id}});
+    const queryBuilder = this.repository.createQueryBuilder('user');
+    queryBuilder.leftJoinAndSelect('user.user_roles', 'user_role');
+    queryBuilder.leftJoinAndSelect('user_role.role', 'role');
+    queryBuilder.where('user.id = :id', {id});
+    return queryBuilder.getOne();
   }
 
   async findByEmail(email: string){
