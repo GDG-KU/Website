@@ -21,7 +21,7 @@ export class MypageService {
     }
 
     // roles가 undefined인 경우 빈 배열로 처리
-    const role = user.user_roles ? user.user_roles.map(user_role => user_role.role.role_type).join(" / ") : "Role 연결 실패";
+    const role = user.user_roles.length != 0 ? user.user_roles.map(user_role => user_role.role.role_type).join(" / ") : "Role 연결 실패";
 
     return {
       nickname: user.nickname,
