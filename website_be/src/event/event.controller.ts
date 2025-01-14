@@ -1,8 +1,7 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
 import { EventService } from './service/event.service';
-import { CreateEventDto } from './dto/request/create-event.dto';
+import { CreateEventDto, UpdateEventDto } from './dto/request/create-event.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { DeleteEventDto } from './dto/request/delete-event.dto';
 import { FindEventDto } from './dto/request/find-event.dto';
 import { EventResponseDto } from './dto/response/event.response.dto';
 
@@ -42,9 +41,15 @@ export class EventController {
     return this.eventService.findByDate(findEventDto);
   }
 
+  @Patch(":id")
+  @ApiOperation({ summary: '일정 수정'})
+  updateEvent(@Param("id") id: number,@Body() updateEventDto: UpdateEventDto) {
+    return this.eventService.updateEvent(id, updateEventDto);
+  }
+
   @Delete(":id")
   @ApiOperation({ summary: '일정 삭제'})
-  deleteEvent(@Param() deleteEventDto: DeleteEventDto) {
-    return this.eventService.deleteEvent(deleteEventDto.id);
+  deleteEvent(@Param('id') id: number) {
+    return this.eventService.deleteEvent(id);
   }
 }

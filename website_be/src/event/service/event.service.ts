@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { EventRepository } from '../repository/event.repository';
-import { CreateEventDto } from '../dto/request/create-event.dto';
+import { CreateEventDto, UpdateEventDto } from '../dto/request/create-event.dto';
 import { EventResponseDto } from '../dto/response/event.response.dto';
 import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
@@ -89,6 +89,39 @@ export class EventService {
   findByDate(findEventDto: FindEventDto): Promise<EventResponseDto[]> {
     const {start_date, end_date} = findEventDto;
     return this.eventRepository.findByDate(start_date, end_date);
+  }
+
+  async updateEvent(id: number, updateEventDto: UpdateEventDto) {
+    const existingEvent = await this.eventRepository.findOne({where: {id}, relations: ['tag']});
+
+    if (!existingEvent) {
+      throw new NotFoundException(`Event with ID ${id} not found.`);
+    }
+
+    if (existingEvent.tag.id === updateEventDto.tag_id) {
+      await this.eventRepository.update(id, updateEventDto);
+      return {message: `Event with ID ${id} has been successfully updated.`};
+    } else {
+      const queryRunner = this.dataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+  
+      try{
+        const user_ids = existingEvent.tag.users.map(user => user.id);
+  
+        await queryRunner.manager.update(Event, id, updateEventDto);
+        await this.attendanceRepository.upsertAttendance(id, user_ids, queryRunner);
+        await queryRunner.commitTransaction();
+  
+        return {message: `Event with ID ${id} has been successfully updated.`};
+      } catch (err) {
+        await queryRunner.rollbackTransaction();
+        throw err;
+      } finally {
+        await queryRunner.release();
+      }
+    }
   }
 
   findAll(): Promise<Event[]> {
