@@ -10,7 +10,7 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  @ApiOperation({ summary: '일정 생성 및 동기화 // 모든 user정보를 attendance에 저장'})
+  @ApiOperation({ summary: '일정 생성 및 동기화'})
   @ApiResponse({
     description: '일정 생성 성공',
     type: EventResponseDto,
@@ -20,7 +20,7 @@ export class EventController {
   }
 
   @Post(':event_id/attendance')
-  @ApiOperation({ summary: '일정 참석 여부 생성 및 동기화 // 모든 user가 attendance에 저장됨에 따라 사용할 필요가 없다고 생각됨.'})
+  @ApiOperation({ summary: '일정 참석 여부 동기화'})
   setAttendance(@Param('event_id') event_id: number) {
     return this.eventService.setAttendance(event_id);
   }

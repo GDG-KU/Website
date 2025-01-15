@@ -4,6 +4,7 @@ import { AttendanceResponseDto } from './dto/response/attendance.response.dto';
 import { UpdateAttendancesDto } from './dto/request/update-attendance.dto';
 import { DataSource } from 'typeorm';
 import { Attendance } from './entities/attendance.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class AttendanceService {
@@ -15,6 +16,23 @@ export class AttendanceService {
   async getAttendanceByEventId(event_id: number): Promise<AttendanceResponseDto[]> {
     const attendances = await this.attendanceRepository.findByEvent(event_id);
     return attendances.map(attendance => AttendanceResponseDto.of(attendance));
+  }
+
+  async checkAttendance(event_id: number, user: User, is_attend?: boolean, reason?: string) {
+    const attendances = await this.attendanceRepository.findOneByEventAndUser(event_id, user.id);
+
+    if (!attendances) {
+      throw new BadRequestException('Invalid request');
+    }
+
+    if (reason) {
+      attendances.reason = reason;
+    }
+    if (is_attend !== undefined) {
+      attendances.is_attend = is_attend;
+    }
+    
+    return await this.attendanceRepository.save(attendances);
   }
 
   async updateAttendances(updateAttendancesDto: UpdateAttendancesDto) {

@@ -13,8 +13,13 @@ export class AttendanceRepository extends Repository<Attendance> {
     super(repository.target, repository.manager);
   }
 
-  async findOneByEventAndUser(event: Event, user: User) {
-    return await this.repository.findOne({where: {event, user}});
+  async findOneByEventAndUser(event_id: number, user_id: number) {
+    const queryBuilder = this.repository.createQueryBuilder('attendance');
+
+    queryBuilder.where('attendance.event_id = :event_id', { event_id });
+    queryBuilder.andWhere('attendance.user_id = :user_id', { user_id });
+
+    return queryBuilder.getOne();
   }
 
   async findUsersByEvent(event_id: number) {

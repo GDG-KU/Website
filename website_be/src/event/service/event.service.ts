@@ -92,16 +92,24 @@ export class EventService {
   }
 
   async updateEvent(id: number, updateEventDto: UpdateEventDto) {
-    const existingEvent = await this.eventRepository.findOne({where: {id}, relations: ['tag']});
+    const existingEvent = await this.eventRepository.findTagUsersByEventId(id);
 
     if (!existingEvent) {
       throw new NotFoundException(`Event with ID ${id} not found.`);
     }
 
-    if (existingEvent.tag.id === updateEventDto.tag_id) {
-      await this.eventRepository.update(id, updateEventDto);
+    const {tag_id, ...updateEventInfo} = updateEventDto;
+
+    if (existingEvent.tag.id === tag_id) {
+      await this.eventRepository.update(id, updateEventInfo);
       return {message: `Event with ID ${id} has been successfully updated.`};
     } else {
+      const origintag = await this.tagRepository.findById(tag_id);
+
+      if (!origintag) {
+        throw new NotFoundException(`Tag with ID ${tag_id} not found.`);
+      }
+
       const queryRunner = this.dataSource.createQueryRunner();
 
       await queryRunner.connect();
@@ -110,7 +118,7 @@ export class EventService {
       try{
         const user_ids = existingEvent.tag.users.map(user => user.id);
   
-        await queryRunner.manager.update(Event, id, updateEventDto);
+        await queryRunner.manager.update(Event, id, {...updateEventInfo, tag: origintag});
         await this.attendanceRepository.upsertAttendance(id, user_ids, queryRunner);
         await queryRunner.commitTransaction();
   
