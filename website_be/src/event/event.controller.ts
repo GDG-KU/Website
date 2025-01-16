@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { EventService } from './service/event.service';
 import { CreateEventDto, UpdateEventDto } from './dto/request/create-event.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FindEventDto } from './dto/request/find-event.dto';
 import { EventResponseDto } from './dto/response/event.response.dto';
+import { JwtAuthGuard } from 'src/auth/security/jwt.guard';
 
 @Controller('event')
 export class EventController {
@@ -32,13 +33,16 @@ export class EventController {
   }
 
   @Get("bydate")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('token')
   @ApiOperation({ summary: 'start_date와 end_date 사이에 있는 일정 조회'})
   @ApiResponse({
     description: '일정 조회 성공',
     type: [EventResponseDto],
   })
-  findByDate(@Query() findEventDto: FindEventDto) {
-    return this.eventService.findByDate(findEventDto);
+  findByDate(@Req() req, @Query() findEventDto: FindEventDto) {
+    const {user} = req;
+    return this.eventService.findByDate(findEventDto, user);
   }
 
   @Patch(":id")

@@ -1,15 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource} from 'typeorm';
 import { EventRepository } from '../repository/event.repository';
 import { CreateEventDto, UpdateEventDto } from '../dto/request/create-event.dto';
 import { EventResponseDto } from '../dto/response/event.response.dto';
-import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
 import { FindEventDto } from '../dto/request/find-event.dto';
 import { TagRepository } from 'src/tag/repository/tag.repository';
 import { AttendanceRepository } from '../../attendance/repository/attendance.repository';
-import { Attendance } from '../../attendance/entities/attendance.entity';
-import { UserRepository } from 'src/user/repository/user.repository';
+import { User } from 'src/user/entities/user.entity';
 
 
 @Injectable()
@@ -18,7 +16,6 @@ export class EventService {
     private readonly eventRepository: EventRepository,
     private readonly tagRepository: TagRepository,
     private readonly attendanceRepository: AttendanceRepository,
-    private readonly userRepositroy: UserRepository,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -86,9 +83,19 @@ export class EventService {
   }
 
 
-  findByDate(findEventDto: FindEventDto): Promise<EventResponseDto[]> {
-    const {start_date, end_date} = findEventDto;
-    return this.eventRepository.findByDate(start_date, end_date);
+  findByDate(findEventDto: FindEventDto, user: User): Promise<EventResponseDto[]> {
+    if (!user) {
+      throw new NotFoundException(`User not found.`);
+    }
+    
+    const {start_date, end_date, is_my_activity} = findEventDto;
+    
+    if (is_my_activity === true) {
+      return this.eventRepository.findByDate(start_date, end_date, user);
+    }
+    else {
+      return this.eventRepository.findByDate(start_date, end_date);
+    }
   }
 
   async updateEvent(id: number, updateEventDto: UpdateEventDto) {
