@@ -13,8 +13,17 @@ export class AttendanceRepository extends Repository<Attendance> {
     super(repository.target, repository.manager);
   }
 
-  async findOneByEventAndUser(event: Event, user: User) {
-    return await this.repository.findOne({where: {event, user}});
+  async findOneByEventAndUser(event_id: number, user_id: number, nowdate?: Date) {
+    const queryBuilder = this.repository.createQueryBuilder('attendance');
+
+    if (nowdate) {
+      queryBuilder.leftJoinAndSelect('attendance.event', 'event');
+      queryBuilder.where(":nowdate BETWEEN DATE_SUB(event.start_date, INTERVAL 30 MINUTE) AND event.end_date", { nowdate });
+    }
+    queryBuilder.andWhere('attendance.event_id = :event_id', { event_id });
+    queryBuilder.andWhere('attendance.user_id = :user_id', { user_id });
+
+    return queryBuilder.getOne();
   }
 
   async findUsersByEvent(event_id: number) {
@@ -48,6 +57,16 @@ export class AttendanceRepository extends Repository<Attendance> {
           `,
           [event_id, user_id]
         );
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async deleteAttendance(event_id: number, user_ids: number[], queryRunner: QueryRunner) {
+    try {
+      for (const user_id of user_ids) {
+        await queryRunner.manager.delete(Attendance, { event: {id : event_id}, user: {id : user_id} });
       }
     } catch (err) {
       throw err;

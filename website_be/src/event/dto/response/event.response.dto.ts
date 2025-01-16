@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Event } from "src/event/entities/event.entity";
 import { TagResponseDto } from "src/tag/dto/response/tag.response.dto";
 
 export class EventResponseDto {
@@ -43,4 +44,16 @@ export class EventResponseDto {
     description: "Event detail",
   })
   tag: TagResponseDto;
+
+  static of(event: Event): EventResponseDto {
+    return {
+      id: event.id,
+      title: event.title,
+      start_date: event.start_date,
+      end_date: event.end_date,
+      location: event.location,
+      url: event.url,
+      tag: event.tag ? TagResponseDto.of(event.tag) : null,
+    };
+  }
 }

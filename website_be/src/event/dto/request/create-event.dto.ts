@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, OmitType } from "@nestjs/swagger";
 
 export class CreateEventDto {
   @ApiProperty({
@@ -37,3 +37,5 @@ export class CreateEventDto {
   })
   tag_id: number;
 }
+
+export class UpdateEventDto extends OmitType(CreateEventDto, ["title"] as const) {}

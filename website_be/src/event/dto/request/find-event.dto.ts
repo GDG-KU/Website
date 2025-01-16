@@ -1,4 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import { IsBoolean } from "class-validator";
 
 export class FindEventDto {
   @ApiProperty({
@@ -12,4 +14,12 @@ export class FindEventDto {
     description: "end date",
   })
   end_date: Date;
+
+  @ApiProperty({
+    example: true,
+    description: "is my activity",
+  })
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  is_my_activity: boolean;
 }

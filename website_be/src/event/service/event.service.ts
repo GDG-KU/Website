@@ -1,15 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource} from 'typeorm';
 import { EventRepository } from '../repository/event.repository';
-import { CreateEventDto } from '../dto/request/create-event.dto';
+import { CreateEventDto, UpdateEventDto } from '../dto/request/create-event.dto';
 import { EventResponseDto } from '../dto/response/event.response.dto';
-import { Tag } from '../../tag/entities/tag.entity';
 import { Event } from '../entities/event.entity';
 import { FindEventDto } from '../dto/request/find-event.dto';
 import { TagRepository } from 'src/tag/repository/tag.repository';
 import { AttendanceRepository } from '../../attendance/repository/attendance.repository';
-import { Attendance } from '../../attendance/entities/attendance.entity';
-import { UserRepository } from 'src/user/repository/user.repository';
+import { User } from 'src/user/entities/user.entity';
 
 
 @Injectable()
@@ -18,7 +16,6 @@ export class EventService {
     private readonly eventRepository: EventRepository,
     private readonly tagRepository: TagRepository,
     private readonly attendanceRepository: AttendanceRepository,
-    private readonly userRepositroy: UserRepository,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -30,10 +27,8 @@ export class EventService {
     if (!origintag) {
       throw new NotFoundException(`Tag with ID ${tag_id} not found.`);
     }
-    
-    const users = await this.userRepositroy.find();
-    const user_ids = users.map(user => user.id)
 
+    
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -41,11 +36,12 @@ export class EventService {
 
     try{
       const event = await queryRunner.manager.save(Event, {...eventData, tag: origintag});
+      const user_ids = origintag.users.map(user => user.id);
 
       await this.attendanceRepository.upsertAttendance(event.id, user_ids, queryRunner);
       await queryRunner.commitTransaction();
 
-      return event;
+      return EventResponseDto.of(event);
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw err;
@@ -60,8 +56,11 @@ export class EventService {
     if(!event){
       throw new NotFoundException(`Event with ID ${event_id} not found.`);
     }
+    if(!event.tag){
+      throw new NotFoundException(`Event with ID ${event_id} not have tag.`);
+    }
 
-    const users = await this.userRepositroy.find();
+    const users = event.tag.users;
     const user_ids = users.map(user => user.id)
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -84,9 +83,60 @@ export class EventService {
   }
 
 
-  findByDate(findEventDto: FindEventDto): Promise<EventResponseDto[]> {
-    const {start_date, end_date} = findEventDto;
-    return this.eventRepository.findByDate(start_date, end_date);
+  findByDate(findEventDto: FindEventDto, user: User): Promise<EventResponseDto[]> {
+    if (!user) {
+      throw new NotFoundException(`User not found.`);
+    }
+    
+    const {start_date, end_date, is_my_activity} = findEventDto;
+    
+    if (is_my_activity === true) {
+      return this.eventRepository.findByDate(start_date, end_date, user);
+    }
+    else {
+      return this.eventRepository.findByDate(start_date, end_date);
+    }
+  }
+
+  async updateEvent(id: number, updateEventDto: UpdateEventDto) {
+    const existingEvent = await this.eventRepository.findTagUsersByEventId(id);
+
+    if (!existingEvent) {
+      throw new NotFoundException(`Event with ID ${id} not found.`);
+    }
+
+    const {tag_id, ...updateEventInfo} = updateEventDto;
+
+    if (existingEvent.tag.id === tag_id) {
+      await this.eventRepository.update(id, updateEventInfo);
+      return {message: `Event with ID ${id} has been successfully updated.`};
+    } else {
+      const origintag = await this.tagRepository.findById(tag_id);
+
+      if (!origintag) {
+        throw new NotFoundException(`Tag with ID ${tag_id} not found.`);
+      }
+
+      const queryRunner = this.dataSource.createQueryRunner();
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+  
+      try{
+        const user_ids = existingEvent.tag.users.map(user => user.id);
+  
+        await queryRunner.manager.update(Event, id, {...updateEventInfo, tag: origintag});
+        await this.attendanceRepository.upsertAttendance(id, user_ids, queryRunner);
+        await queryRunner.commitTransaction();
+  
+        return {message: `Event with ID ${id} has been successfully updated.`};
+      } catch (err) {
+        await queryRunner.rollbackTransaction();
+        throw err;
+      } finally {
+        await queryRunner.release();
+      }
+    }
   }
 
   findAll(): Promise<Event[]> {
