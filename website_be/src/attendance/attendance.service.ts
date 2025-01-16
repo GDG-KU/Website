@@ -5,6 +5,7 @@ import { UpdateAttendancesDto } from './dto/request/update-attendance.dto';
 import { DataSource } from 'typeorm';
 import { Attendance } from './entities/attendance.entity';
 import { User } from 'src/user/entities/user.entity';
+import { UserIdsDto } from 'src/user/dto/request/user_ids.dto';
 
 @Injectable()
 export class AttendanceService {
@@ -55,6 +56,48 @@ export class AttendanceService {
       await queryRunner.commitTransaction();
 
       return {message: `Attendances with IDs ${attendance_ids} updated successfully`};
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async addUsersByEvent(event_id: number, userIdsDto: UserIdsDto) {
+    const {user_ids} = userIdsDto;
+    
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    queryRunner.connect();
+    queryRunner.startTransaction();
+
+    try {
+      await this.attendanceRepository.upsertAttendance(event_id, user_ids, queryRunner);
+      await queryRunner.commitTransaction();
+
+      return {message: `Users with IDs ${user_ids} added to event with ID ${event_id}`};
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async deleteUsersByEvent(event_id: number, userIdsDto: UserIdsDto) {
+    const {user_ids} = userIdsDto;
+
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    queryRunner.connect();
+    queryRunner.startTransaction();
+
+    try {
+      await this.attendanceRepository.deleteAttendance(event_id, user_ids, queryRunner);
+      await queryRunner.commitTransaction();
+
+      return {message: `Users with IDs ${user_ids} deleted from event with ID ${event_id}`};
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw err;

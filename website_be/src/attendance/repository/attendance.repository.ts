@@ -58,4 +58,14 @@ export class AttendanceRepository extends Repository<Attendance> {
       throw err;
     }
   }
+
+  async deleteAttendance(event_id: number, user_ids: number[], queryRunner: QueryRunner) {
+    try {
+      for (const user_id of user_ids) {
+        await queryRunner.manager.delete(Attendance, { event: {id : event_id}, user: {id : user_id} });
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 }
