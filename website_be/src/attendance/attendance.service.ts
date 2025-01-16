@@ -79,7 +79,7 @@ export class AttendanceService {
       return {message: `Users with IDs ${user_ids} added to event with ID ${event_id}`};
     } catch (err) {
       await queryRunner.rollbackTransaction();
-      throw err;
+      throw new BadRequestException('Invalid request');
     } finally {
       await queryRunner.release();
     }
@@ -100,7 +100,7 @@ export class AttendanceService {
       return {message: `Users with IDs ${user_ids} deleted from event with ID ${event_id}`};
     } catch (err) {
       await queryRunner.rollbackTransaction();
-      throw err;
+      throw new BadRequestException('Invalid request');
     } finally {
       await queryRunner.release();
     }
