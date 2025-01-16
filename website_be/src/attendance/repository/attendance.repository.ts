@@ -13,10 +13,14 @@ export class AttendanceRepository extends Repository<Attendance> {
     super(repository.target, repository.manager);
   }
 
-  async findOneByEventAndUser(event_id: number, user_id: number) {
+  async findOneByEventAndUser(event_id: number, user_id: number, nowdate?: Date) {
     const queryBuilder = this.repository.createQueryBuilder('attendance');
 
-    queryBuilder.where('attendance.event_id = :event_id', { event_id });
+    if (nowdate) {
+      queryBuilder.leftJoinAndSelect('attendance.event', 'event');
+      queryBuilder.where(":nowdate BETWEEN DATE_SUB(event.start_date, INTERVAL 30 MINUTE) AND event.end_date", { nowdate });
+    }
+    queryBuilder.andWhere('attendance.event_id = :event_id', { event_id });
     queryBuilder.andWhere('attendance.user_id = :user_id', { user_id });
 
     return queryBuilder.getOne();

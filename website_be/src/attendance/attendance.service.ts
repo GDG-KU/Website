@@ -20,20 +20,27 @@ export class AttendanceService {
   }
 
   async checkAttendance(event_id: number, user: User, is_attend?: boolean, reason?: string) {
-    const attendances = await this.attendanceRepository.findOneByEventAndUser(event_id, user.id);
+    let attendance;
 
-    if (!attendances) {
+    if (is_attend === undefined) {
+      attendance = await this.attendanceRepository.findOneByEventAndUser(event_id, user.id);
+    } else{
+      const nowdate = new Date();
+      attendance = await this.attendanceRepository.findOneByEventAndUser(event_id, user.id, nowdate);
+    }
+
+    if (!attendance) {
       throw new BadRequestException('Invalid request');
     }
 
     if (reason) {
-      attendances.reason = reason;
+      attendance.reason = reason;
     }
     if (is_attend !== undefined) {
-      attendances.is_attend = is_attend;
+      attendance.is_attend = is_attend;
     }
     
-    return await this.attendanceRepository.save(attendances);
+    return await this.attendanceRepository.save(attendance);
   }
 
   async updateAttendances(updateAttendancesDto: UpdateAttendancesDto) {
