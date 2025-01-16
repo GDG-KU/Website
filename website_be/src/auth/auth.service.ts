@@ -18,7 +18,7 @@ export class AuthService {
   async googleCallback(req): Promise<TokensResponseDto> {
     // 유저 정보가 없으면 에러
     if (!req.user) {
-      throw new UnauthorizedException("User not found");
+      throw new UnauthorizedException('User not found');
     }
 
     const user = req.user;
@@ -28,22 +28,25 @@ export class AuthService {
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    
-    try{
+
+    try {
       let existingUser = await this.userRepositroy.findByEmail(user.email);
 
-      if (!existingUser){
+      if (!existingUser) {
         // 최초 가입자일 시 유저 정보 저장
         const newuser = new User();
         newuser.email = user.email;
-        newuser.nickname = user.lastName+user.firstName;
-        existingUser = await queryRunner.manager.save(User, newuser); 
+        newuser.nickname = user.lastName + user.firstName;
+        existingUser = await queryRunner.manager.save(User, newuser);
       }
 
       // access token 생성, refresh token 생성 및 저장
       const access_token = await this.generateAccessToken(existingUser.id);
-      const refresh_token = await this.updateRefresh(existingUser.id, queryRunner);
-
+      const refresh_token = await this.updateRefresh(
+        existingUser.id,
+        queryRunner,
+      );
+      await queryRunner.commitTransaction();
       return { access_token, refresh_token };
     } catch (err) {
       await queryRunner.rollbackTransaction();
@@ -55,7 +58,7 @@ export class AuthService {
 
   async refreshTokens(refresh_token: string): Promise<TokensResponseDto> {
     let payload;
-    
+
     // refresh token 검증
     try {
       payload = this.jwtService.verify(refresh_token, {
@@ -69,7 +72,11 @@ export class AuthService {
     const user = await this.userRepositroy.findById(user_id);
 
     // 유저 정보가 없거나 refresh token이 일치하지 않으면 에러
-    if(!user || user.refresh_token !== refresh_token || payload.type !== 'refresh'){
+    if (
+      !user ||
+      user.refresh_token !== refresh_token ||
+      payload.type !== 'refresh'
+    ) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
@@ -80,7 +87,10 @@ export class AuthService {
     return { access_token, refresh_token: new_refresh_token };
   }
 
-  private async updateRefresh(id: number, queryRunner?: QueryRunner): Promise<string> {
+  private async updateRefresh(
+    id: number,
+    queryRunner?: QueryRunner,
+  ): Promise<string> {
     // payload에 user id와 type을 담아 refresh token 생성
     const payload = { id, type: 'refresh' };
 
@@ -90,9 +100,9 @@ export class AuthService {
     });
 
     // refresh token 저장
-    if(queryRunner){
-      await queryRunner.manager.update(User, {id}, { refresh_token });
-    } else{
+    if (queryRunner) {
+      await queryRunner.manager.update(User, { id }, { refresh_token });
+    } else {
       await this.userRepositroy.update(id, { refresh_token });
     }
 
