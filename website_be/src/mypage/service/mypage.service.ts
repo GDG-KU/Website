@@ -47,12 +47,13 @@ export class MypageService {
   }
   
   
-  
   async getHistory(userId: number): Promise<MypageHistoryResponseDto[]> {
     const histories = await this.historyRepository.findByUserId(userId);
     let accumulatedPoints = 0;
-
-    return histories.map((history) => {
+  
+    const sortedHistories = histories.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  
+    const result = sortedHistories.map((history) => {
       accumulatedPoints += history.pointChange;
       return {
         date: history.createdAt.toISOString().split("T")[0],
@@ -61,8 +62,10 @@ export class MypageService {
         reason: history.reason,
       };
     });
+  
+    return result.reverse();
   }
-
+  
   
   async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findById(userId);
