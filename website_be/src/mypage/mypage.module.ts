@@ -12,5 +12,6 @@ import { Position } from 'src/user/entities/position.entity';
   imports: [TypeOrmModule.forFeature([History, Position]), UserModule],  // UserModule 추가
   controllers: [MypageController],
   providers: [MypageService, HistoryRepository, PositionRepository], 
+  exports: [HistoryRepository],
 })
 export class MypageModule {}
