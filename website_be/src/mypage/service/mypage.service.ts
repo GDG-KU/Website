@@ -59,7 +59,7 @@ export class MypageService {
       if (!history) {
         throw new NotFoundException('히스토리를 찾을 수 없습니다.');
       }
-      cursor = history.created_at;
+      cursor = { id: cursor_id, date: history.created_at };
     }
 
     const histories = await this.historyRepository.findByUserId(userId, limit, cursor);
