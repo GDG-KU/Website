@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put } from "@nestjs/common";
+import { Body, Controller, Get, Param, Put, Query } from "@nestjs/common";
 import { MypageService } from "./service/mypage.service";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { MypageProfileResponseDto } from "./dto/response/mypage-profile.response.dto";
@@ -21,8 +21,8 @@ export class MypageController {
   @Get(":userId/history")
   @ApiOperation({ summary: "포인트 히스토리 조회" })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
-  async getHistory(@Param("userId") userId: number) {
-    return this.mypageService.getHistory(userId);
+  async getHistory(@Param("userId") userId: number, @Query("cursor") cursor?: Date) {
+    return this.mypageService.getHistory(userId, cursor);
   }
 
   @Put(':userId/profile') 

@@ -17,8 +17,8 @@ export class MypageProfileResponseDto {
   @ApiProperty({ example: '20231234' })
   studentNumber: string;  // 학번 추가
 
-  @ApiProperty({ example: 'Manager' })
-  positionName: string;  // 포지션명 추가
+  @ApiProperty({ example: ['BE', 'AI'] })
+  positionNames: string[];  // 포지션명 추가
 
   @ApiProperty({ example: 'profile_image_url.jpg' })
   profileImage: string;  // 프로필 이미지 추가
