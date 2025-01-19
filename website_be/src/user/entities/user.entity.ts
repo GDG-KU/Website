@@ -4,6 +4,7 @@ import { Authority } from "./authority.entity";
 import { Attendance } from "src/attendance/entities/attendance.entity";
 import { Position } from "./position.entity";
 import { User_role } from "./user_role.entity";
+import { Tag } from "src/tag/entities/tag.entity";
 
 @Entity({ schema: 'user', name: 'user' })
 export class User {
@@ -44,6 +45,9 @@ export class User {
 
     @OneToMany(() => Attendance, attendance => attendance.user)
     attendances: Attendance[];
+
+    @ManyToMany(() => Tag, tag => tag.users)
+    tags: Tag[];
 
     @CreateDateColumn({name : 'created_at', type : 'timestamp'})
     created_at: Date;

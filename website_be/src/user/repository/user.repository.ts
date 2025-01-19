@@ -36,4 +36,8 @@ export class UserRepository extends Repository<User> {
     return await this.repository.update(id, {refresh_token});
   }
   
+  async findByStudentNumber(studentNumber: string) {
+    return await this.repository.findOne({ where: { student_number: studentNumber } });
+  }
+  
 }

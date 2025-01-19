@@ -1,17 +1,17 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { EventService } from './service/event.service';
-import { CreateEventDto } from './dto/request/create-event.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { DeleteEventDto } from './dto/request/delete-event.dto';
+import { CreateEventDto, UpdateEventDto } from './dto/request/create-event.dto';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FindEventDto } from './dto/request/find-event.dto';
 import { EventResponseDto } from './dto/response/event.response.dto';
+import { JwtAuthGuard } from 'src/auth/security/jwt.guard';
 
 @Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  @ApiOperation({ summary: '일정 생성 및 동기화 // 모든 user정보를 attendance에 저장'})
+  @ApiOperation({ summary: '일정 생성 및 동기화'})
   @ApiResponse({
     description: '일정 생성 성공',
     type: EventResponseDto,
@@ -20,8 +20,8 @@ export class EventController {
     return this.eventService.createEvent(createEventDto);
   }
 
-  //@Post(':event_id/attendance')
-  @ApiOperation({ summary: '일정 참석 여부 생성 및 동기화 // 모든 user가 attendance에 저장됨에 따라 사용할 필요가 없다고 생각됨.'})
+  @Post(':event_id/attendance')
+  @ApiOperation({ summary: '일정 참석 여부 동기화'})
   setAttendance(@Param('event_id') event_id: number) {
     return this.eventService.setAttendance(event_id);
   }
@@ -33,18 +33,27 @@ export class EventController {
   }
 
   @Get("bydate")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('token')
   @ApiOperation({ summary: 'start_date와 end_date 사이에 있는 일정 조회'})
   @ApiResponse({
     description: '일정 조회 성공',
     type: [EventResponseDto],
   })
-  findByDate(@Query() findEventDto: FindEventDto) {
-    return this.eventService.findByDate(findEventDto);
+  findByDate(@Req() req, @Query() findEventDto: FindEventDto) {
+    const {user} = req;
+    return this.eventService.findByDate(findEventDto, user);
+  }
+
+  @Patch(":id")
+  @ApiOperation({ summary: '일정 수정'})
+  updateEvent(@Param("id") id: number,@Body() updateEventDto: UpdateEventDto) {
+    return this.eventService.updateEvent(id, updateEventDto);
   }
 
   @Delete(":id")
   @ApiOperation({ summary: '일정 삭제'})
-  deleteEvent(@Param() deleteEventDto: DeleteEventDto) {
-    return this.eventService.deleteEvent(deleteEventDto.id);
+  deleteEvent(@Param('id') id: number) {
+    return this.eventService.deleteEvent(id);
   }
 }
