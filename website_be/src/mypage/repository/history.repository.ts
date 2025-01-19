@@ -9,10 +9,22 @@ export class HistoryRepository {
     @InjectRepository(History) private readonly repository: Repository<History>
   ) {}
 
-  async findByUserId(userId: number) {
-    return await this.repository.find({
-      where: { user: { id: userId } },
-      order: { createdAt: "DESC" },
-    });
+  async findById(id: number) {
+    return await this.repository.findOne({ where: { id } });
+  }
+
+  async findByUserId(userId: number, limit: number, cursor?: Date) {
+    
+    const queryBuilder = this.repository.createQueryBuilder('history');
+    
+    queryBuilder.where('history.user_id = :userId', { userId });
+    
+    if (cursor) {
+      queryBuilder.andWhere('history.created_at <= :cursor', { cursor });
+    }
+
+    queryBuilder.orderBy('history.created_at', 'DESC');
+    queryBuilder.limit(limit);
+    return queryBuilder.getMany();
   }
 }

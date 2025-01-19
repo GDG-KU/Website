@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -13,10 +14,11 @@ export class History {
   id: number;
 
   @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column({ name: 'point_change', type: 'int', nullable: false })
-  pointChange: number;
+  point_change: number;
 
   @Column({ name: 'role', type: 'varchar', length: 30 })
   role: string;
@@ -25,5 +27,5 @@ export class History {
   reason: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt: Date;
+  created_at: Date;
 }

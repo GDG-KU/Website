@@ -15,14 +15,14 @@ export class MypageProfileResponseDto {
   department: string;  // 학과 추가
 
   @ApiProperty({ example: '20231234' })
-  studentNumber: string;  // 학번 추가
+  student_number: string;  // 학번 추가
 
   @ApiProperty({ example: ['BE', 'AI'] })
-  positionNames: string[];  // 포지션명 추가
+  position_names: string[];  // 포지션명 추가
 
   @ApiProperty({ example: 'profile_image_url.jpg' })
-  profileImage: string;  // 프로필 이미지 추가
+  profile_image: string;  // 프로필 이미지 추가
 
   @ApiProperty({ example: '2025-01-16' })
-  joinDate: string;  // 가입일
+  join_date: string;  // 가입일
 }

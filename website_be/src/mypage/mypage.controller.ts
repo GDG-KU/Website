@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Put, Query } from "@nestjs/common";
 import { MypageService } from "./service/mypage.service";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { MypageProfileResponseDto } from "./dto/response/mypage-profile.response.dto";
 import { MypageHistoryResponseDto } from "./dto/response/mypage-history.response.dto";
 import { User } from "src/user/entities/user.entity";
@@ -21,8 +21,9 @@ export class MypageController {
   @Get(":userId/history")
   @ApiOperation({ summary: "포인트 히스토리 조회" })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
-  async getHistory(@Param("userId") userId: number, @Query("cursor") cursor?: Date) {
-    return this.mypageService.getHistory(userId, cursor);
+  @ApiQuery({ name: "cursor_id", required: false, type: Number })
+  async getHistory(@Param("userId") userId: number, @Query("cursor_id") cursor_id?: number) {
+    return this.mypageService.getHistory(userId, cursor_id);
   }
 
   @Put(':userId/profile') 
