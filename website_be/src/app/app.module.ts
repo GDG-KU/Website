@@ -21,7 +21,7 @@ import { Attendance } from 'src/attendance/entities/attendance.entity';
 import { MypageModule } from 'src/mypage/mypage.module';
 import { History } from 'src/mypage/entities/history.entity';
 import { Position } from 'src/user/entities/position.entity';
-import { User_role } from 'src/user/entities/user_role.entity';
+import { UserRole } from 'src/user/entities/user_role.entity';
 import {PointModule} from "../point/point.module";
 
 @Module({
@@ -37,7 +37,7 @@ import {PointModule} from "../point/point.module";
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History, Position, User_role],
+      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History, Position, UserRole],
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
       charset: 'utf8mb4',

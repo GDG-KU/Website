@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { QueryRunner, Repository } from "typeorm";
-import { User_role } from "../entities/user_role.entity";
+import { UserRole } from "../entities/user_role.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
-export class UserRoleRepository extends Repository<User_role> {
+export class UserRoleRepository extends Repository<UserRole> {
   constructor(
-    @InjectRepository(User_role) private readonly repository: Repository<User_role>,
+    @InjectRepository(UserRole) private readonly repository: Repository<UserRole>,
   ) {
     super(repository.target, repository.manager);
   }
@@ -16,7 +16,7 @@ export class UserRoleRepository extends Repository<User_role> {
       for (const role_id of role_ids) {
         await queryRunner.manager.query(
           `
-          INSERT INTO \`user_role\` (\`user_id\`, \`role_id\`)
+          INSERT INTO \`UserRole\` (\`user_id\`, \`role_id\`)
           VALUES (?, ?)
           `,
           [user_id, role_id]

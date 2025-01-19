@@ -3,7 +3,7 @@ import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, Ma
 import { Authority } from "./authority.entity";
 import { Attendance } from "src/attendance/entities/attendance.entity";
 import { Position } from "./position.entity";
-import { User_role } from "./user_role.entity";
+import { UserRole } from "./user_role.entity";
 import { Tag } from "src/tag/entities/tag.entity";
 
 @Entity({ schema: 'user', name: 'user' })
@@ -24,8 +24,8 @@ export class User {
     @JoinTable({name : 'user_authority'})
     authoritys: Authority[];
 
-    @OneToMany(() => User_role, user_role => user_role.user)
-    user_roles: User_role[];
+    @OneToMany(() => UserRole, user_role => user_role.user)
+    user_roles: UserRole[];
 
     @Column({name : 'refresh_token', type : 'varchar', nullable : true})
     refresh_token: string;
