@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { PointService } from './point.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/security/jwt.guard';
@@ -19,15 +27,21 @@ export class PointController {
     return this.pointService.getUserPoint(id);
   }
 
+  @Get(':userId')
+  @ApiBearerAuth('token')
+  async getUserPoint(
+    @Param('userId') userId: number,
+  ): Promise<RolePointResponseDto[]> {
+    return this.pointService.getUserPoint(userId);
+  }
+
   @Post()
   @ApiBearerAuth('token')
   async updatePoint(
     @Body() userPoint: UserPointDto,
-    @Req() req,
   ): Promise<RolePointResponseDto> {
-    const { id } = req.user;
     return this.pointService.updateUserPoint(
-      id,
+      userPoint.userId,
       getRoleByName(userPoint.role),
       userPoint.point,
     );
