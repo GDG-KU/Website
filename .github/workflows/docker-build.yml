@@ -57,6 +57,7 @@ jobs:
           echo "JWT_SECRET=${{ secrets.JWT_SECRET}}" >> .env
           echo "REFRESH_TOKEN_EXPIRATION=${{ secrets.REFRESH_TOKEN_EXPIRATION}}" >> .env
           echo "ACCESS_TOKEN_EXPIRATION=${{ secrets.ACCESS_TOKEN_EXPIRATION}}" >> .env
+          echo "HOMEPAGE_URL=${{ secrets.HOMEPAGE_URL}}" >> .env
           cat .env
       - name: Run Docker for develop
         run: |
