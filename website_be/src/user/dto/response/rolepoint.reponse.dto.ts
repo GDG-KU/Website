@@ -1,4 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
+import {ApiProperty} from "@nestjs/swagger";
+import {UserRole} from "../../entities/user_role.entity";
 
 export class RolePointResponseDto {
   @ApiProperty({
@@ -12,4 +13,12 @@ export class RolePointResponseDto {
     description: "Role point",
   })
   point: number;
+
+
+  static of(userRole: UserRole): RolePointResponseDto {
+    return {
+      role: userRole.role.role_type,
+      point: userRole.point,
+    }
+  }
 }
