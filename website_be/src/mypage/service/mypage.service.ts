@@ -65,7 +65,7 @@ export class MypageService {
     const histories = await this.historyRepository.findByUserId(userId, limit, cursor);
     return histories.map(history => MypageHistoryResponseDto.of(history));
   }
-
+  
   
   async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findById(userId);
