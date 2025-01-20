@@ -38,7 +38,7 @@ export class PointService {
       userRole.point += point;
       const history: History = new History();
       history.user = userRole.user;
-      history.pointChange = point;
+      history.point_change = point;
       history.role = userRole.role.role_type;
       history.reason = 'todo';
       await manager.save(history);

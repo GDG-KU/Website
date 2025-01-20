@@ -1,5 +1,5 @@
 import { Notice } from "src/notice/entities/notice.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Authority } from "./authority.entity";
 import { Attendance } from "src/attendance/entities/attendance.entity";
 import { Position } from "./position.entity";
@@ -21,7 +21,6 @@ export class User {
     notices: Notice[];
 
     @ManyToMany(() => Authority, authority => authority.users)
-    @JoinTable({name : 'user_authority'})
     authoritys: Authority[];
 
     @OneToMany(() => UserRole, user_role => user_role.user)
@@ -39,9 +38,8 @@ export class User {
     @Column({name : 'profile_image', type : 'varchar', nullable : true})
     profile_image: string;
 
-    @ManyToOne(() => Position, position => position.users)
-    @JoinColumn({name : 'position_id'})
-    position: Position | null;
+    @ManyToMany(() => Position, position => position.users)
+    positions: Position[];
 
     @OneToMany(() => Attendance, attendance => attendance.user)
     attendances: Attendance[];

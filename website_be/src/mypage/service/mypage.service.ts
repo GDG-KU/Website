@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { HistoryRepository } from "../repository/history.repository";
 import { UserRepository } from "src/user/repository/user.repository";
 import { MypageProfileResponseDto } from "../dto/response/mypage-profile.response.dto";
@@ -18,7 +18,7 @@ export class MypageService {
   async getProfile(userId: number): Promise<MypageProfileResponseDto> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['user_roles', 'user_roles.role', 'position']  // 관계 설정
+      relations: ['user_roles', 'user_roles.role', 'positions']  // 관계 설정
     });
   
     if (!user) {
@@ -31,39 +31,39 @@ export class MypageService {
       : "Role 연결 실패";
   
     // 포지션이 없는 경우 처리
-    const positionName = user.position ? user.position.name : 'No position';
-  
+    // const positionName = user.position ? user.position.name : 'No position';
+    
+    const positionNames = user.positions.map(position => position.name);
     return {
       nickname: user.nickname,
       role: role,
       email: user.email,  // 이메일 추가
       department: user.department || 'No department',  // 학과 추가
-      studentNumber: user.student_number || 'No student number',  // 학번 추가
-      positionName: positionName,  // 포지션명 추가
-      profileImage: user.profile_image || 'No profile image',  // 프로필 이미지 추가
-      joinDate: user.created_at.toISOString().split("T")[0],  // 가입일
+      student_number: user.student_number || 'No student number',  // 학번 추가
+      //positionName: positionName,  // 포지션명 추가
+      position_names: positionNames,  // 포지션명 추가
+      profile_image: user.profile_image || 'No profile image',  // 프로필 이미지 추가
+      join_date: user.created_at.toISOString().split("T")[0],  // 가입일
     };  
 
   }
   
   
-  async getHistory(userId: number): Promise<MypageHistoryResponseDto[]> {
-    const histories = await this.historyRepository.findByUserId(userId);
-    let accumulatedPoints = 0;
   
-    const sortedHistories = histories.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-  
-    const result = sortedHistories.map((history) => {
-      accumulatedPoints += history.pointChange;
-      return {
-        date: history.createdAt.toISOString().split("T")[0],
-        pointChange: history.pointChange,
-        accumulatedPoints,
-        reason: history.reason,
-      };
-    });
-  
-    return result.reverse();
+  async getHistory(userId: number, cursor_id?: number): Promise<MypageHistoryResponseDto[]> {
+    const limit = 10;
+    let cursor = undefined;
+    
+    if (cursor_id) {
+      const history = await this.historyRepository.findById(cursor_id);
+      if (!history) {
+        throw new NotFoundException('히스토리를 찾을 수 없습니다.');
+      }
+      cursor = { id: cursor_id, date: history.created_at };
+    }
+
+    const histories = await this.historyRepository.findByUserId(userId, limit, cursor);
+    return histories.map(history => MypageHistoryResponseDto.of(history));
   }
   
   
@@ -85,13 +85,16 @@ export class MypageService {
     user.student_number = updateUserDto.student_number;
 
     // position_name을 기반으로 position 업데이트
-    const position = await this.positionRepository.findByName(updateUserDto.position_name);
+    const position_names = updateUserDto.position_names;
+    const positions = await Promise.all(position_names.map(async (position_name) => {
+      return await this.positionRepository.findByName(position_name);
+    }))
 
-    if (position) {
-      user.position = position;  // position 객체를 할당
-    } else {
-      throw new HttpException('유효한 포지션을 찾을 수 없습니다.', HttpStatus.BAD_REQUEST);
+    if (positions.includes(null)) {
+      throw new HttpException('포지션을 찾을 수 없습니다.', HttpStatus.BAD_REQUEST);
     }
+    
+    user.positions = positions;
 
     return await this.userRepository.save(user);  // 수정된 사용자 정보 저장
   }

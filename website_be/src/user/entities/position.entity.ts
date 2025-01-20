@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 
@@ -19,6 +19,11 @@ export class Position {
   @Column({name : 'name', type : 'varchar', length : 64, nullable : false})
   name: string;
 
-  @OneToMany(() => User, user => user.position)
+  @ManyToMany(() => User, user => user.positions)
+  @JoinTable({
+    name: 'user_position',
+    joinColumn: { name: 'position_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' }
+  })
   users: User[];
 }
