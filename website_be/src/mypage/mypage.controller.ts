@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { MypageService } from "./service/mypage.service";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { MypageProfileResponseDto } from "./dto/response/mypage-profile.response.dto";
@@ -27,9 +27,10 @@ export class MypageController {
   @Get("history")
   @ApiOperation({ summary: "포인트 히스토리 조회" })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
+  @ApiQuery({ name: "cursor_id", required: false, type: Number })
   async getHistory(@Req() req, @Query("cursor_id") cursor_id?: number): Promise<MypageHistoryResponseDto[]> {
     const { user } = req;
-    return this.mypageService.getHistory(userId, cursor_id);
+    return this.mypageService.getHistory(user.id, cursor_id);
   }
 
   @UseGuards(JwtAuthGuard)
