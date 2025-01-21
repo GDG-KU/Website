@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/security/jwt.guard';
 import { RolePointResponseDto } from '../user/dto/response/rolepoint.reponse.dto';
 import { UserPointDto } from './dto/request/user-point.dto';
-import { getRoleByName } from '../common/enums/user-role.enum';
+import { getRoleIdByName } from '../common/enums/user-role.enum';
 
 @ApiTags('Point')
 @Controller('point')
@@ -28,7 +28,7 @@ export class PointController {
     const { id } = req.user;
     return this.pointService.updateUserPoint(
       id,
-      getRoleByName(userPoint.role),
+      getRoleIdByName(userPoint.role),
       userPoint.point,
     );
   }

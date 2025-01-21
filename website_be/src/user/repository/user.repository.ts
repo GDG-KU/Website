@@ -38,5 +38,4 @@ export class UserRepository extends Repository<User> {
   async findByStudentNumber(studentNumber: string) {
     return await this.repository.findOne({ where: { student_number: studentNumber } });
   }
-  
 }
