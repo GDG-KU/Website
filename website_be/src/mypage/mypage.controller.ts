@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Query, Req, UseGuards, Post, Put, Delete, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { MypageService } from "./service/mypage.service";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { MypageProfileResponseDto } from "./dto/response/mypage-profile.response.dto";
@@ -6,11 +6,17 @@ import { MypageHistoryResponseDto } from "./dto/response/mypage-history.response
 import { User } from "src/user/entities/user.entity";
 import { UpdateUserDto } from "./dto/request/mypage-profile.request.dto";
 import { JwtAuthGuard } from "src/auth/security/jwt.guard";
+import { FileInterceptor } from '@nestjs/platform-express';
+import { GCPStorageService } from "./service/gcp-storage.service";
+
 
 @ApiTags("Mypage")
 @Controller("mypage")
 export class MypageController {
-  constructor(private readonly mypageService: MypageService) {}
+  constructor(
+    private readonly mypageService: MypageService,
+    private readonly gcpStorageService: GCPStorageService, 
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('token') 
@@ -44,5 +50,41 @@ export class MypageController {
   ): Promise<User> {
     const { user } = req; // Guard에서 인증된 사용자 정보
     return this.mypageService.updateUser(user.id, updateUserDto); // 인증된 사용자 ID 사용
+  }
+
+  @Post(":userId/profile")
+  @UseInterceptors(FileInterceptor('file')) // 'file' 필드명 확인
+  @ApiOperation({ summary: "프로필 이미지 업로드" })
+  @ApiResponse({ status: 201, description: '이미지가 성공적으로 업로드되었습니다.', type: String })
+  async uploadProfile(
+    @Param("userId") userId: number,
+    @UploadedFile() file: Express.Multer.File // Multer 파일 객체
+  ) {
+    if (!file) {
+      throw new Error('파일이 업로드되지 않았습니다.');
+    }
+    const url = await this.gcpStorageService.uploadFile(file);
+    await this.mypageService.updateProfileImage(userId, url); // 사용자 프로필 이미지 업데이트
+    return { url };
+  }
+
+
+  @Delete(":userId/profile")
+  @ApiOperation({ summary: "프로필 이미지 삭제" })
+  @ApiResponse({ status: 200, description: '이미지가 성공적으로 삭제되었습니다.' })
+  async deleteProfile(@Param("userId") userId: number) {
+    const user = await this.mypageService.getProfile(userId);
+    const fileName = user.profile_image.split('/').pop(); // URL에서 파일명 추출
+    await this.gcpStorageService.deleteFile(fileName);
+    await this.mypageService.updateProfileImage(userId, ''); // 이미지 URL 초기화
+    return { message: '프로필 이미지가 삭제되었습니다.' };
+  }
+
+  @Get(":userId/profile")
+  @ApiOperation({ summary: "프로필 이미지 URL 조회" })
+  @ApiResponse({ status: 200, description: '프로필 이미지 URL을 반환합니다.', type: String })
+  async getProfileUrl(@Param("userId") userId: number) {
+    const user = await this.mypageService.getProfile(userId);
+    return { url: user.profile_image };
   }
 }
