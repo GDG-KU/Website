@@ -12,18 +12,26 @@ export class UserRoleRepository extends Repository<UserRole> {
   }
 
   async saveUserRoles(user_id: number, role_ids: number[], queryRunner: QueryRunner) {
-    try {
-      for (const role_id of role_ids) {
-        await queryRunner.manager.query(
-          `
-          INSERT INTO \`UserRole\` (\`user_id\`, \`role_id\`)
-          VALUES (?, ?)
-          `,
-          [user_id, role_id]
-        );
-      }
-    } catch (err) {
-      throw err;
+    for (const role_id of role_ids) {
+      await queryRunner.manager.query(
+        `
+        INSERT INTO \`user_role\` (\`user_id\`, \`role_id\`)
+        VALUES (?, ?)
+        `,
+        [user_id, role_id]
+      );
+    }
+  }
+
+  async deleteUserRoles(user_id: number, role_ids: number[], queryRunner: QueryRunner) {
+    for (const role_id of role_ids) {
+      await queryRunner.manager.query(
+        `
+        DELETE FROM \`User_role\`
+        WHERE \`user_id\` = ? AND \`role_id\` = ?
+        `,
+        [user_id, role_id]
+      );
     }
   }
 }
