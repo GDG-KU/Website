@@ -99,5 +99,16 @@ export class MypageService {
     return await this.userRepository.save(user);  // 수정된 사용자 정보 저장
   }
 
+  async updateProfileImage(userId: number, profileImageUrl: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+  
+    if (!user) {
+      throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+    }
+  
+    user.profile_image = profileImageUrl;
+    await this.userRepository.save(user);
+  }
+
 
 }
