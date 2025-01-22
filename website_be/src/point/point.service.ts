@@ -4,21 +4,25 @@ import { DataSource } from 'typeorm';
 import { RolePointResponseDto } from '../user/dto/response/rolepoint.reponse.dto';
 import { HistoryRepository } from '../mypage/repository/history.repository';
 import { History } from '../mypage/entities/history.entity';
+import { UserRepository } from '../user/repository/user.repository';
 
 @Injectable()
 export class PointService {
   constructor(
+    private readonly userRepository: UserRepository,
     private readonly userRoleRepository: UserRoleRepository,
     private readonly historyRepository: HistoryRepository,
     private dataSource: DataSource,
   ) {}
 
   async getUserPoint(userId: number): Promise<RolePointResponseDto[]> {
-    const userRole = await this.userRoleRepository.find({
-      where: { user: { id: userId } },
-      relations: ['role'],
-    });
-    return userRole.map(RolePointResponseDto.of);
+    // const userRole = await this.userRoleRepository.find({
+    //   where: { user: { id: userId } },
+    //   relations: ['role'],
+    // });
+
+    const user = await this.userRepository.findById(userId);
+    return user.user_roles.map(RolePointResponseDto.of);
   }
 
   async updateUserPoint(
