@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
+import * as crypto from "crypto";
 
 @Injectable()
 export class GCPStorageService {
@@ -12,10 +13,20 @@ export class GCPStorageService {
     });
   }
 
-  async uploadFile(file: Express.Multer.File): Promise<string> {
+  async uploadFile(user_id: number, file: Express.Multer.File): Promise<string> {
     const bucket = this.storage.bucket(this.bucketName);
     const blob = bucket.file(file.originalname);
     const blobStream = blob.createWriteStream();
+
+    const timestamp = Date.now().toString();
+    // 해시값 생성 (userId, blobName, timestamp를 기반으로)
+    const hash = crypto
+      .createHash('sha256')
+      .update(blob.name + timestamp)
+      .digest('hex')
+      .slice(0, 8);
+
+    blob.name = `${user_id}_${hash}`;
 
     return new Promise((resolve, reject) => {
       blobStream.on('error', (err) => reject(err));
