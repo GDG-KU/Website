@@ -1,11 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { TagService } from "./service/tag.service";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { TagRelationsResponseDto } from "./dto/response/tag.relations.response.dto";
 import { CreateTagDto } from "./dto/request/create-tag.dto";
 import { UserIdsDto } from "src/user/dto/request/user_ids.dto";
+import { JwtAuthGuard } from "src/auth/security/jwt.guard";
+import { AuthorityGuard } from "src/auth/security/authority.guard";
+import { SetAuthority } from "src/auth/security/authority.decorator";
 
 @Controller('tag')
+@ApiBearerAuth('token') 
+@UseGuards(JwtAuthGuard, AuthorityGuard)
 export class TagController {
   constructor(
     private readonly tagService: TagService,
@@ -29,17 +34,22 @@ export class TagController {
 
   @Post()
   @ApiOperation({ summary: '태그 생성'})
+  @SetAuthority('CalendarManager')
   async create(@Body() createTagDto: CreateTagDto) {
     return await this.tagService.create(createTagDto);
   }
 
   @Post(":tag_id/users")
   @ApiOperation({ summary: '태그에 출석해야하는 user 추가 // 이미 있는 user 추가시 error + 존재하지 않는 tag나 user일 시 error'})
+  @SetAuthority('CalendarManager')
   async addUser(@Param('tag_id') id:number, @Body() userIdsDto: UserIdsDto) {
     return await this.tagService.addUser(id, userIdsDto);
   }
+
+
   @Delete(":tag_id/users")
   @ApiOperation({ summary: '태그에 출석해야하는 user 삭제'})
+  @SetAuthority('CalendarManager')
   async deleteUser(@Param('tag_id') id:number, @Body() userIdsDto: UserIdsDto) {
     return await this.tagService.deleteUser(id, userIdsDto);
   }
@@ -47,6 +57,7 @@ export class TagController {
 
   @Patch(":tag_id/property/:property_id")
   @ApiOperation({ summary: '태그 속성 설정'})
+  @SetAuthority('CalendarManager')
   async setProperty(@Param('tag_id') tag_id:number, @Param('property_id') property_id:number) {
     return await this.tagService.setProperty(tag_id, property_id);
   }
