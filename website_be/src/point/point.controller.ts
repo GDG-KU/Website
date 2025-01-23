@@ -46,9 +46,7 @@ export class PointController {
   @ApiBearerAuth('token')
   async updatePoint(
     @Body() userPoint: UserPointDto,
-    @Req() req,
   ): Promise<RolePointResponseDto> {
-    const { id } = req.user;
     return this.pointService.updateUserPoint(
       id,
       getRoleIdByName(userPoint.role),
