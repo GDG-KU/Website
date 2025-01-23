@@ -13,18 +13,17 @@ export class HistoryRepository {
     return await this.repository.findOne({ where: { id } });
   }
 
-  async findByUserId(userId: number, limit: number, cursor?: { id: number, date: Date }) {
+  async findByUserId(userId: number, limit: number, cursor?:number) {
     
     const queryBuilder = this.repository.createQueryBuilder('history');
     
     queryBuilder.where('history.user_id = :userId', { userId });
     
     if (cursor) {
-      queryBuilder.andWhere('(history.created_at < :cursor_date OR (history.created_at = :cursor_date AND history.id > :cursor_id))', {cursor_id: cursor.id, cursor_date: cursor.date});
+      queryBuilder.andWhere('history.id < :cursor', { cursor });
     }
 
-    queryBuilder.orderBy('history.created_at', 'DESC');
-    queryBuilder.addOrderBy('history.id', 'ASC');
+    queryBuilder.orderBy('history.id', 'DESC');
     queryBuilder.limit(limit);
     return queryBuilder.getMany();
   }

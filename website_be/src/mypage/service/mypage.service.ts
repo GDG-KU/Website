@@ -50,17 +50,8 @@ export class MypageService {
   
   
   
-  async getHistory(userId: number, cursor_id?: number): Promise<MypageHistoryResponseDto[]> {
+  async getHistory(userId: number, cursor?: number): Promise<MypageHistoryResponseDto[]> {
     const limit = 10;
-    let cursor = undefined;
-    
-    if (cursor_id) {
-      const history = await this.historyRepository.findById(cursor_id);
-      if (!history) {
-        throw new NotFoundException('히스토리를 찾을 수 없습니다.');
-      }
-      cursor = { id: cursor_id, date: history.created_at };
-    }
 
     const histories = await this.historyRepository.findByUserId(userId, limit, cursor);
     return histories.map(history => MypageHistoryResponseDto.of(history));

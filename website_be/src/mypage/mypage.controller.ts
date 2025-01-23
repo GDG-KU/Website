@@ -32,10 +32,10 @@ export class MypageController {
   @Get("history")
   @ApiOperation({ summary: "포인트 히스토리 조회" })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
-  @ApiQuery({ name: "cursor_id", required: false, type: Number })
-  async getHistory(@Req() req, @Query("cursor_id") cursor_id?: number): Promise<MypageHistoryResponseDto[]> {
+  @ApiQuery({ name: "cursor", required: false, type: Number })
+  async getHistory(@Req() req, @Query("cursor") cursor?: number): Promise<MypageHistoryResponseDto[]> {
     const { user } = req;
-    return this.mypageService.getHistory(user.id, cursor_id);
+    return this.mypageService.getHistory(user.id, cursor);
   }
 
   @Put("profile")
