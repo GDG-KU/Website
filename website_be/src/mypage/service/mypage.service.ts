@@ -42,7 +42,7 @@ export class MypageService {
       student_number: user.student_number || 'No student number',  // 학번 추가
       //positionName: positionName,  // 포지션명 추가
       position_names: positionNames,  // 포지션명 추가
-      profile_image: user.profile_image || 'No profile image',  // 프로필 이미지 추가
+      profile_image: user.profile_image, // 프로필 이미지 추가
       join_date: user.created_at.toISOString().split("T")[0],  // 가입일
     };  
 
