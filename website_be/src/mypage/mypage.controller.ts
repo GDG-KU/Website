@@ -8,10 +8,13 @@ import { UpdateUserDto } from "./dto/request/mypage-profile.request.dto";
 import { JwtAuthGuard } from "src/auth/security/jwt.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GCPStorageService } from "./service/gcp-storage.service";
+import { AuthorityGuard } from "src/auth/security/authority.guard";
 
 
 @ApiTags("Mypage")
 @Controller("mypage")
+@ApiBearerAuth('token') 
+@UseGuards(JwtAuthGuard, AuthorityGuard)
 export class MypageController {
   constructor(
     private readonly mypageService: MypageService,
@@ -19,8 +22,6 @@ export class MypageController {
   ) {}
 
   @Get("profile") 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('token') 
   @ApiOperation({ summary: "프로필 조회" })
   @ApiResponse({ type: MypageProfileResponseDto })
   async getProfile(@Req() req): Promise<MypageProfileResponseDto> {
@@ -29,8 +30,6 @@ export class MypageController {
   }
 
   @Get("history")
-  @UseGuards(JwtAuthGuard) 
-  @ApiBearerAuth('token')
   @ApiOperation({ summary: "포인트 히스토리 조회" })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
   @ApiQuery({ name: "cursor_id", required: false, type: Number })
@@ -40,8 +39,6 @@ export class MypageController {
   }
 
   @Put("profile")
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('token')
   @ApiOperation({ summary: "프로필 정보수정" })
   @ApiResponse({ status: 200, description: '사용자 정보가 성공적으로 업데이트되었습니다.', type: User })
   async updateProfile(
@@ -53,8 +50,6 @@ export class MypageController {
   }
 
   @Post("profile/image")
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('token')
   @UseInterceptors(FileInterceptor('file')) // 'file' 필드명 확인
   @ApiOperation({ summary: "프로필 이미지 업로드" })
   @ApiConsumes('multipart/form-data')
@@ -86,8 +81,6 @@ export class MypageController {
 
 
   @Delete("profile/image")
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('token')
   @ApiOperation({ summary: "프로필 이미지 삭제" })
   @ApiResponse({ status: 200, description: '이미지가 성공적으로 삭제되었습니다.' })
   async deleteProfile(@Req() req) {
@@ -100,8 +93,6 @@ export class MypageController {
   }
 
   @Get("profile/image")
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('token')
   @ApiOperation({ summary: "프로필 이미지 URL 조회" })
   @ApiResponse({ status: 200, description: '프로필 이미지 URL을 반환합니다.', type: String })
   async getProfileUrl(@Req() req) {
