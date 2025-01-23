@@ -41,7 +41,7 @@ export class AuthService {
       }
 
       // access token 생성, refresh token 생성 및 저장
-      const access_token = await this.generateAccessToken(existingUser.id);
+      const access_token = await this.generateAccessToken(existingUser);
       const refresh_token = await this.updateRefresh(
         existingUser.id,
         queryRunner,
@@ -81,7 +81,7 @@ export class AuthService {
     }
 
     // access token 생성, refresh token 갱신 및 저장
-    const access_token = await this.generateAccessToken(user_id);
+    const access_token = await this.generateAccessToken(user);
     const new_refresh_token = await this.updateRefresh(user_id);
 
     return { access_token, refresh_token: new_refresh_token };
@@ -109,9 +109,15 @@ export class AuthService {
     return refresh_token;
   }
 
-  private async generateAccessToken(id: number): Promise<string> {
+  private async generateAccessToken(user: User): Promise<string> {
     // payload에 user id와 type을 담아 access token 생성
-    const payload = { id, type: 'access' };
+    console.log('user : ', user);
+    console.log('authoritys : ', user.authoritys);
+    const payload = {
+      id: user.id,
+      type: 'access',
+      authorities: user.authoritys?.map((auth) => auth.type),
+    };
 
     // access token 생성
     return await this.jwtService.signAsync(payload, {

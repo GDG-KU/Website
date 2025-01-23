@@ -12,11 +12,14 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/security/jwt.guard';
 import { RolePointResponseDto } from '../user/dto/response/rolepoint.reponse.dto';
 import { UserPointDto } from './dto/request/user-point.dto';
+import { AuthorityGuard } from '../auth/security/authority.guard';
+import { Authority } from '../auth/security/authority.decorator';
 import { getRoleIdByName } from '../common/enums/user-role.enum';
 
 @ApiTags('Point')
 @Controller('point')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, AuthorityGuard)
+// @UseGuards(AuthorityGuard)
 export class PointController {
   constructor(private readonly pointService: PointService) {}
 
@@ -29,10 +32,14 @@ export class PointController {
 
   @Get(':userId')
   @ApiBearerAuth('token')
+  @Authority('point')
   async getUserPoint(
+    @Req() req,
     @Param('userId') userId: number,
   ): Promise<RolePointResponseDto[]> {
-    return this.pointService.getUserPoint(userId);
+    // console.log('req', req);
+    const { id } = req.user;
+    return this.pointService.getUserPoint(id);
   }
 
   @Post()
