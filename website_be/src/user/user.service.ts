@@ -47,8 +47,6 @@ export class UserService {
   }
 
   async updateRoles(admin: User, updateUserRoleDto: UpdateUserRoleDto): Promise<UserInfoResponseDto> {
-
-
     const user = await this.userRepository.findById(updateUserRoleDto.user_id);
 
     if (!user) {
@@ -82,6 +80,13 @@ export class UserService {
       await queryRunner.commitTransaction();
   
       const updated_user = await this.userRepository.findById(updateUserRoleDto.user_id);
+
+      // 프론트에서 권한 부여 추가시 지워질 코드
+      // Core 이상은 모든 권한 부여여
+      if(Math.max(...user_role_ids) <= 3){
+        this.updateAuthorities(admin, {user_id: user.id, authorities: ['PointManager', 'CalendarManager', 'AttendanceManager', 'RoleManager', 'AuthorityManager']});
+      }
+
 
       return UserInfoResponseDto.of(updated_user);
     } catch (err) {
