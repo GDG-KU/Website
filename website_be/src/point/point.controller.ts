@@ -48,7 +48,7 @@ export class PointController {
     @Body() userPoint: UserPointDto,
   ): Promise<RolePointResponseDto> {
     return this.pointService.updateUserPoint(
-      id,
+      userPoint.userId,
       getRoleIdByName(userPoint.role),
       userPoint.point,
     );

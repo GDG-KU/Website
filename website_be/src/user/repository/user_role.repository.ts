@@ -27,7 +27,7 @@ export class UserRoleRepository extends Repository<UserRole> {
     for (const role_id of role_ids) {
       await queryRunner.manager.query(
         `
-        DELETE FROM \`User_role\`
+        DELETE FROM \`user_role\`
         WHERE \`user_id\` = ? AND \`role_id\` = ?
         `,
         [user_id, role_id]
