@@ -3,7 +3,7 @@ import { User } from "./user.entity";
 import { Role } from "./role.entity";
 
 @Entity({ schema: 'user_role', name: 'user_role' })
-export class User_role{
+export class UserRole{
   @PrimaryGeneratedColumn({name : 'id', type : 'int'})
   id: number;
 

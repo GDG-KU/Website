@@ -8,11 +8,11 @@ import { Authority } from './entities/authority.entity';
 import { UserRepository } from './repository/user.repository';
 import { RoleRepository } from './repository/role.repository';
 import { Position } from './entities/position.entity';
-import { User_role } from './entities/user_role.entity';
+import { UserRole } from './entities/user_role.entity';
 import { UserRoleRepository } from './repository/user_role.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Authority, Role, Position, User_role])],
+  imports: [TypeOrmModule.forFeature([User, Authority, Role, Position, UserRole])],
   controllers: [UserController],
   providers: [UserService, UserRepository, RoleRepository, UserRoleRepository],
   exports: [UserRepository, RoleRepository, UserRoleRepository],

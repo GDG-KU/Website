@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CreateUserDto } from "../dto/request/create-user.dto";
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -39,5 +38,4 @@ export class UserRepository extends Repository<User> {
   async findByStudentNumber(studentNumber: string) {
     return await this.repository.findOne({ where: { student_number: studentNumber } });
   }
-  
 }
