@@ -29,15 +29,15 @@ export class PointController {
     return this.pointService.getUserPoint(id);
   }
 
-  // @Get(':userId')
-  // @ApiBearerAuth('token')
-  // async getUserPoint(
-  //   @Req() req,
-  //   @Param('userId') userId: number,
-  // ): Promise<RolePointResponseDto[]> {
-  //   const { id } = req.user;
-  //   return this.pointService.getUserPoint(id);
-  // }
+  @Get(':userId')
+  @ApiBearerAuth('token')
+  async getUserPoint(
+    @Req() req,
+    @Param('userId') userId: number,
+  ): Promise<RolePointResponseDto[]> {
+    const { id } = req.user;
+    return this.pointService.getUserPoint(id);
+  }
 
   @Post()
   @SetAuthority('PointManager')
