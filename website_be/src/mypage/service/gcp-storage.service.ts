@@ -8,9 +8,14 @@ export class GCPStorageService {
   private bucketName = process.env.GCP_BUCKET_NAME;//'profile-img-bucket'; // GCP에 설정한 버킷 이름
 
   constructor() {
-    this.storage = new Storage({
-      keyFilename: process.env.GCP_KEY_FILE, //'./gcp_bucket_key.json', // JSON 키 파일 경로
-    });
+    // if (process.env.NODE_ENV !== 'production') {
+    //   this.storage = new Storage({
+    //     keyFilename: process.env.GCP_KEY_FILE, //'./gcp_bucket_key.json', // JSON 키 파일 경로
+    //   });
+    // } else {
+    //   this.storage = new Storage();
+    // }
+    this.storage = new Storage();
   }
 
   async uploadFile(user_id: number, file: Express.Multer.File): Promise<string> {
