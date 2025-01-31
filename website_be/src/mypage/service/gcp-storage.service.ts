@@ -14,7 +14,7 @@ export class GCPStorageService {
     //   });
     // } else {
     //   this.storage = new Storage();
-    // }
+    // } 추후 수정 필요
     this.storage = new Storage();
   }
 
