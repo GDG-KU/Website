@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - release-**
+  workflow_dispatch: {}
 env:
   DOCKER_IMAGE_DEV: ghcr.io/min010324/gdg-ku-website-dev
   DOCKER_CONTAINER_DEV: gdg-ku-website-dev
