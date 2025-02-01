@@ -34,7 +34,7 @@ export class AuthController {
     res.cookie('refresh_token', refresh_token, { httpOnly: true});
     
     // access token 반환 (개발용으로 현재는 refresh token도 반환)
-    return {access_token, refresh_token};
+    return access_token;
   }
 
 
@@ -53,7 +53,7 @@ export class AuthController {
     res.cookie('refresh_token', refresh_token, { httpOnly: true});
     
     // access token 반환 (개발용으로 현재는 refresh token도 반환)
-    return {access_token, refresh_token};
+    return access_token;
   }
 
   @Get('api/test')
