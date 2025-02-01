@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Query, Req, UseGuards, Post, Put, Delete, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Param, Query, Req, UseGuards, Post, Put, Delete, UploadedFile, UseInterceptors, Patch, BadRequestException } from "@nestjs/common";
 import { MypageService } from "./service/mypage.service";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags, ApiBearerAuth, ApiBody, ApiConsumes } from "@nestjs/swagger";
 import { MypageProfileResponseDto } from "./dto/response/mypage-profile.response.dto";
@@ -32,10 +32,10 @@ export class MypageController {
   @Get("history")
   @ApiOperation({ summary: "포인트 히스토리 조회" })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
-  @ApiQuery({ name: "cursor_id", required: false, type: Number })
-  async getHistory(@Req() req, @Query("cursor_id") cursor_id?: number): Promise<MypageHistoryResponseDto[]> {
+  @ApiQuery({ name: "cursor", required: false, type: Number })
+  async getHistory(@Req() req, @Query("cursor") cursor?: number): Promise<MypageHistoryResponseDto[]> {
     const { user } = req;
-    return this.mypageService.getHistory(user.id, cursor_id);
+    return this.mypageService.getHistory(user.id, cursor);
   }
 
   @Put("profile")
@@ -49,6 +49,7 @@ export class MypageController {
     return this.mypageService.updateUser(user.id, updateUserDto); // 인증된 사용자 ID 사용
   }
 
+  /*
   @Post("profile/image")
   @UseInterceptors(FileInterceptor('file')) // 'file' 필드명 확인
   @ApiOperation({ summary: "프로필 이미지 업로드" })
@@ -74,7 +75,7 @@ export class MypageController {
       throw new Error('파일이 업로드되지 않았습니다.');
     }
     const user_id = req.user.id;
-    const url = await this.gcpStorageService.uploadFile(file);
+    const url = await this.gcpStorageService.uploadFile(user_id, file);
     await this.mypageService.updateProfileImage(user_id, url); // 사용자 프로필 이미지 업데이트
     return { url };
   }
@@ -91,6 +92,51 @@ export class MypageController {
     await this.mypageService.updateProfileImage(user_id, ''); // 이미지 URL 초기화
     return { message: '프로필 이미지가 삭제되었습니다.' };
   }
+  */
+
+  @Patch("profile/image")
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: "프로필 이미지 수정" })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: '이미지가 성공적으로 수정되었습니다.', type: String })
+  async updateProfileImage(
+    @Req() req,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    // file이 없으면 이미지 삭제
+    const user_id = req.user.id;
+    const user = await this.mypageService.getProfile(user_id);
+    if (!file && !user.profile_image) {
+      throw new BadRequestException('프로필 이미지가 없습니다.');
+    }
+
+    console.log(user.profile_image);
+    if(user.profile_image) {
+      const fileName = user.profile_image.split('/').pop(); // URL에서 파일명 추출
+      await this.gcpStorageService.deleteFile(fileName);
+    }
+
+    if (!file) {
+      await this.mypageService.updateProfileImage(user_id, null); // 이미지 URL 초기화
+      return { url: null };
+    }
+
+    const url = await this.gcpStorageService.uploadFile(user_id, file);
+    await this.mypageService.updateProfileImage(user_id, url);
+    return { url };
+  }
+
 
   @Get("profile/image")
   @ApiOperation({ summary: "프로필 이미지 URL 조회" })
