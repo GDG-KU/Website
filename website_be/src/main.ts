@@ -25,7 +25,10 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
   
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.enableCors();
+  app.enableCors({
+    origin: "https://koreauniv.gdgoc.kr",
+    credentials: true,
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

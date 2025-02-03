@@ -121,7 +121,6 @@ export class MypageController {
       throw new BadRequestException('프로필 이미지가 없습니다.');
     }
 
-    console.log(user.profile_image);
     if(user.profile_image) {
       const fileName = user.profile_image.split('/').pop(); // URL에서 파일명 추출
       await this.gcpStorageService.deleteFile(fileName);
@@ -138,6 +137,8 @@ export class MypageController {
   }
 
 
+
+
   @Get("profile/image")
   @ApiOperation({ summary: "프로필 이미지 URL 조회" })
   @ApiResponse({ status: 200, description: '프로필 이미지 URL을 반환합니다.', type: String })
@@ -145,5 +146,13 @@ export class MypageController {
     const user_id = req.user.id;
     const user = await this.mypageService.getProfile(user_id);
     return { url: user.profile_image };
+  }
+
+  @Get("signedurl")
+  @ApiOperation({ summary: "서명된 URL 생성" })
+  @ApiResponse({ status: 200, description: '서명된 URL을 반환합니다.', type: String })
+  async getSignedUrl(@Req() req) {
+    const user_id = req.user.id;
+    return this.gcpStorageService.getSignedUrl(user_id);
   }
 }
