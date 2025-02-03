@@ -10,12 +10,12 @@ import { GoogleStrategy } from './security/google.strategy';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true}),
+    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
     PassportModule,
-    UserModule
+    UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, GoogleStrategy],

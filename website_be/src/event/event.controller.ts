@@ -5,12 +5,17 @@ import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FindEventDto } from './dto/request/find-event.dto';
 import { EventResponseDto } from './dto/response/event.response.dto';
 import { JwtAuthGuard } from 'src/auth/security/jwt.guard';
+import { AuthorityGuard } from 'src/auth/security/authority.guard';
+import { SetAuthority } from 'src/auth/security/authority.decorator';
 
 @Controller('event')
+@ApiBearerAuth('token') 
+@UseGuards(JwtAuthGuard, AuthorityGuard)
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
+  @SetAuthority('CalendarManager')
   @ApiOperation({ summary: '일정 생성 및 동기화'})
   @ApiResponse({
     description: '일정 생성 성공',
@@ -21,6 +26,7 @@ export class EventController {
   }
 
   @Post(':event_id/attendance')
+  @SetAuthority('CalendarManager')
   @ApiOperation({ summary: '일정 참석 여부 동기화'})
   setAttendance(@Param('event_id') event_id: number) {
     return this.eventService.setAttendance(event_id);
@@ -46,12 +52,14 @@ export class EventController {
   }
 
   @Patch(":id")
+  @SetAuthority('CalendarManager')
   @ApiOperation({ summary: '일정 수정'})
   updateEvent(@Param("id") id: number,@Body() updateEventDto: UpdateEventDto) {
     return this.eventService.updateEvent(id, updateEventDto);
   }
 
   @Delete(":id")
+  @SetAuthority('CalendarManager')
   @ApiOperation({ summary: '일정 삭제'})
   deleteEvent(@Param('id') id: number) {
     return this.eventService.deleteEvent(id);

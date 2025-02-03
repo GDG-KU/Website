@@ -7,8 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Kuconut')
-    .setDescription('Kakao를 이길 Kuconut API 입니다.')
+    .setTitle('GDG KU API')
+    .setDescription('GDG KU API입니다.')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -25,7 +25,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
   
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
+  app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -5,6 +5,7 @@ on:
   push:
     tags:
       - release-**
+  workflow_dispatch: {}
 env:
   DOCKER_IMAGE_DEV: ghcr.io/min010324/gdg-ku-website-dev
   DOCKER_CONTAINER_DEV: gdg-ku-website-dev
@@ -53,10 +54,12 @@ jobs:
           echo "NODE_ENV=dev" >> .env
           echo "GDG_KU_WEB_BE_ACCESS_TOKEN=${{ secrets.GDG_KU_WEB_BE_ACCESS_TOKEN}}" >> .env
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID}}" >> .env
-          echo "GOOGLE_CLIENTSECRET=${{ secrets.GOOGLE_CLIENTSECRET}}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET}}" >> .env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET}}" >> .env
           echo "REFRESH_TOKEN_EXPIRATION=${{ secrets.REFRESH_TOKEN_EXPIRATION}}" >> .env
           echo "ACCESS_TOKEN_EXPIRATION=${{ secrets.ACCESS_TOKEN_EXPIRATION}}" >> .env
+          echo "HOMEPAGE_URL=${{ secrets.HOMEPAGE_URL}}" >> .env
+          echo "GCP_BUCKET_NAME=${{ secrets.GCP_BUCKET_NAME}}" >> .env
           cat .env
       - name: Run Docker for develop
         run: |

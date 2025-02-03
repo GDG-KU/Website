@@ -1,9 +1,9 @@
 import { Notice } from "src/notice/entities/notice.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Authority } from "./authority.entity";
 import { Attendance } from "src/attendance/entities/attendance.entity";
 import { Position } from "./position.entity";
-import { User_role } from "./user_role.entity";
+import { UserRole } from "./user_role.entity";
 import { Tag } from "src/tag/entities/tag.entity";
 
 @Entity({ schema: 'user', name: 'user' })
@@ -21,11 +21,10 @@ export class User {
     notices: Notice[];
 
     @ManyToMany(() => Authority, authority => authority.users)
-    @JoinTable({name : 'user_authority'})
     authoritys: Authority[];
 
-    @OneToMany(() => User_role, user_role => user_role.user)
-    user_roles: User_role[];
+    @OneToMany(() => UserRole, user_role => user_role.user)
+    user_roles: UserRole[];
 
     @Column({name : 'refresh_token', type : 'varchar', nullable : true})
     refresh_token: string;
@@ -39,9 +38,8 @@ export class User {
     @Column({name : 'profile_image', type : 'varchar', nullable : true})
     profile_image: string;
 
-    @ManyToOne(() => Position, position => position.users)
-    @JoinColumn({name : 'position_id'})
-    position: Position | null;
+    @ManyToMany(() => Position, position => position.users)
+    positions: Position[];
 
     @OneToMany(() => Attendance, attendance => attendance.user)
     attendances: Attendance[];
