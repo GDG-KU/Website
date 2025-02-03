@@ -45,6 +45,7 @@ export class PointService {
       history.point_change = point;
       history.role = userRole.role.role_type;
       history.reason = 'todo';
+      history.accumulated_point = userRole.point;
       await manager.save(history);
       await manager.save(userRole);
     });
