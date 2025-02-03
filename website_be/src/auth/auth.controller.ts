@@ -30,11 +30,12 @@ export class AuthController {
     // access token, refresh token 반환
     const {access_token, refresh_token} = await this.authService.googleCallback(req);
     
-    // refresh token 쿠키에 저장
-    res.cookie('refresh_token', refresh_token, { httpOnly: true});
+    // access_token, refresh token 쿠키에 저장
+    res.cookie('access_token', access_token, { httpOnly: true, sameSite: 'lax', maxAge: 3600000, secure: true}); //1시간만 유효
+    res.cookie('refresh_token', refresh_token, { httpOnly: true, sameSite: 'lax', maxAge: 604800000, secure: true}); //7일 유효
     
     // access token 반환 (개발용으로 현재는 refresh token도 반환)
-    return access_token;
+    return res.redirect('https://koreauniv.gdgoc.kr/');
   }
 
 
