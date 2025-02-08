@@ -26,6 +26,9 @@ export class History {
   @Column({ name: 'reason', type: 'varchar', length: 255 })
   reason: string;
 
+  @Column({ name: 'accumulated_point', type: 'int', nullable: false })
+  accumulated_point: number;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   created_at: Date;
 }
