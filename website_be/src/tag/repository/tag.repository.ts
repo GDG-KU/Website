@@ -11,6 +11,30 @@ export class TagRepository extends Repository<Tag> {
     super(repository.target, repository.manager);
   }
 
+  async findAll(property?: string, user_id?: number) {
+    const queryBuilder = this.repository.createQueryBuilder('tag');
+    
+    queryBuilder.select(['tag.id', 'tag.title']);
+    queryBuilder.leftJoinAndSelect('tag.tag_property', 'property');
+
+    if (property) {
+        queryBuilder.where('property.tag_property = :property', {property});
+    }
+
+    if (user_id) {
+      queryBuilder.addSelect(`
+        CASE
+          WHEN (SELECT COUNT(*) FROM user_tag WHERE user_id = ${user_id} AND tag_id = tag.id) > 0 THEN 1
+          ELSE 0
+        END 
+        `, 
+      'is_attend');
+      queryBuilder.orderBy('is_attend', 'DESC');
+    }
+
+    queryBuilder.addOrderBy('tag.id', 'DESC');
+    return await queryBuilder.getRawMany();
+  }
 
   async findById(id: number) {
     return await this.repository.findOne({where: {id}, relations: ['tag_property', 'users']});

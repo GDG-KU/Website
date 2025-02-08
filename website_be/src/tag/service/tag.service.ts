@@ -1,12 +1,11 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { TagRepository } from "../repository/tag.repository";
 import { TagPropertyRepository } from "../repository/tag.property.repository";
-import { TagResponseDto } from "../dto/response/tag.response.dto";
+import { TagResponseDto, TagUserResponseDto } from "../dto/response/tag.response.dto";
 import { UserIdsDto } from "src/user/dto/request/user_ids.dto";
 import { TagRelationsResponseDto } from "../dto/response/tag.relations.response.dto";
 import { UserRepository } from "src/user/repository/user.repository";
 import { DataSource } from "typeorm";
-import { query } from "express";
 import { Tag } from "../entities/tag.entity";
 
 @Injectable()
@@ -18,8 +17,9 @@ export class TagService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async findAll(): Promise<TagResponseDto[]> {
-    return await this.tagRepository.find({relations: ['tag_property']});
+  async findAll(property?: string, user_id?: number): Promise<TagUserResponseDto[]> {
+    const tags = await this.tagRepository.findAll(property, user_id);
+    return tags.map(tag => TagUserResponseDto.rawof(tag));
   }
 
   async findTagDetail(id: number): Promise<TagRelationsResponseDto> {

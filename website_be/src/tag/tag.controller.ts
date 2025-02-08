@@ -1,12 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { TagService } from "./service/tag.service";
-import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from "@nestjs/swagger";
 import { TagRelationsResponseDto } from "./dto/response/tag.relations.response.dto";
 import { CreateTagDto } from "./dto/request/create-tag.dto";
 import { UserIdsDto } from "src/user/dto/request/user_ids.dto";
 import { JwtAuthGuard } from "src/auth/security/jwt.guard";
 import { AuthorityGuard } from "src/auth/security/authority.guard";
 import { SetAuthority } from "src/auth/security/authority.decorator";
+import { TagUserResponseDto } from "./dto/response/tag.response.dto";
 
 @Controller('tag')
 @ApiBearerAuth('token') 
@@ -16,14 +17,17 @@ export class TagController {
     private readonly tagService: TagService,
   ) {}
 
-  @Get('all')
-  @ApiOperation({ summary: '모든 태그 조회'})
+  @Get()
+  @ApiOperation({ summary: '태그 조회'})
   @ApiResponse({
     description: '태그 조회 성공',
-    type: [TagRelationsResponseDto],
+    type: [TagUserResponseDto],
   })
-  async findAll() {
-    return await this.tagService.findAll();
+  @SetAuthority('CalendarManager')
+  @ApiQuery({ name: 'property', required: false, type: String })
+  @ApiQuery({ name: 'user_id', required: false, type: Number })
+  async findAll(@Query('property') property?: string, @Query('user_id') user_id?: number) {
+    return await this.tagService.findAll(property, user_id);
   }
 
   @Get(":tag_id/users")
