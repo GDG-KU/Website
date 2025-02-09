@@ -1,74 +1,116 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
-import { HistoryRepository } from "../repository/history.repository";
-import { UserRepository } from "src/user/repository/user.repository";
-import { MypageProfileResponseDto } from "../dto/response/mypage-profile.response.dto";
-import { MypageHistoryResponseDto } from "../dto/response/mypage-history.response.dto";
-import { UpdateUserDto } from "../dto/request/mypage-profile.request.dto";
-import { User } from "src/user/entities/user.entity";
-import { PositionRepository } from "src/user/repository/position.repository";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { HistoryRepository } from '../repository/history.repository';
+import { UserRepository } from 'src/user/repository/user.repository';
+import { MypageProfileResponseDto } from '../dto/response/mypage-profile.response.dto';
+import { MypageHistoryResponseDto } from '../dto/response/mypage-history.response.dto';
+import { UpdateUserDto } from '../dto/request/mypage-profile.request.dto';
+import { User } from 'src/user/entities/user.entity';
+import { PositionRepository } from 'src/user/repository/position.repository';
 
 @Injectable()
 export class MypageService {
   constructor(
     private readonly historyRepository: HistoryRepository,
     private readonly userRepository: UserRepository,
-    private readonly positionRepository: PositionRepository
+    private readonly positionRepository: PositionRepository,
   ) {}
 
   async getProfile(userId: number): Promise<MypageProfileResponseDto> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['user_roles', 'user_roles.role', 'positions']  // 관계 설정
+      relations: ['user_roles', 'user_roles.role', 'positions'], // 관계 설정
     });
-  
+
     if (!user) {
-      throw new Error("사용자를 찾을 수 없습니다.");
+      throw new Error('사용자를 찾을 수 없습니다.');
     }
-  
+
     // roles가 undefined인 경우 빈 배열로 처리
-    const role = user.user_roles.length != 0 
-      ? user.user_roles.map(user_role => user_role.role.role_type).join(" / ") 
-      : "Role 연결 실패";
-  
+    const role =
+      user.user_roles.length != 0
+        ? user.user_roles
+            .map((user_role) => user_role.role.role_type)
+            .join(' / ')
+        : 'Role 연결 실패';
+
     // 포지션이 없는 경우 처리
     // const positionName = user.position ? user.position.name : 'No position';
-    
-    const positionNames = user.positions.map(position => position.name);
+
+    const positionNames = user.positions.map((position) => position.name);
     return {
       nickname: user.nickname,
       role: role,
-      email: user.email,  // 이메일 추가
-      department: user.department || 'No department',  // 학과 추가
-      student_number: user.student_number || 'No student number',  // 학번 추가
+      email: user.email, // 이메일 추가
+      department: user.department || 'No department', // 학과 추가
+      student_number: user.student_number || 'No student number', // 학번 추가
       //positionName: positionName,  // 포지션명 추가
-      position_names: positionNames,  // 포지션명 추가
+      position_names: positionNames, // 포지션명 추가
       profile_image: user.profile_image, // 프로필 이미지 추가
-      join_date: user.created_at.toISOString().split("T")[0],  // 가입일
-    };  
-
+      join_date: user.created_at.toISOString().split('T')[0], // 가입일
+    };
   }
-  
-  
-  
-  async getHistory(userId: number, cursor?: number): Promise<MypageHistoryResponseDto[]> {
+
+  async getHistory(
+    userId: number,
+    cursor?: number,
+  ): Promise<MypageHistoryResponseDto[]> {
     const limit = 10;
 
-    const histories = await this.historyRepository.findByUserId(userId, limit, cursor);
-    return histories.map(history => MypageHistoryResponseDto.of(history));
+    const histories = await this.historyRepository.findByUserId(
+      userId,
+      limit,
+      cursor,
+    );
+    return histories.map((history) => MypageHistoryResponseDto.of(history));
   }
-  
-  
-  async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
+
+  async getHistoryWithRole(
+    userId: number,
+    role: string,
+    cursor?: number,
+  ): Promise<MypageHistoryResponseDto[]> {
+    const limit = 10;
+
+    const histories = await this.historyRepository.findByUserIdWithRole(
+      userId,
+      role,
+      limit,
+      cursor,
+    );
+    return histories.map((history) => MypageHistoryResponseDto.of(history));
+  }
+
+  async updateUser(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        '사용자를 찾을 수 없습니다.',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     // 학번 중복 검사
-    const existingUserWithStudentNumber = await this.userRepository.findByStudentNumber(updateUserDto.student_number);
-    if (existingUserWithStudentNumber && existingUserWithStudentNumber.id !== userId) {
-      throw new HttpException('이미 존재하는 학번입니다. 다른 학번을 입력해주세요.', HttpStatus.BAD_REQUEST);
+    const existingUserWithStudentNumber =
+      await this.userRepository.findByStudentNumber(
+        updateUserDto.student_number,
+      );
+    if (
+      existingUserWithStudentNumber &&
+      existingUserWithStudentNumber.id !== userId
+    ) {
+      throw new HttpException(
+        '이미 존재하는 학번입니다. 다른 학번을 입력해주세요.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     user.nickname = updateUserDto.nickname;
@@ -77,29 +119,38 @@ export class MypageService {
 
     // position_name을 기반으로 position 업데이트
     const position_names = updateUserDto.position_names;
-    const positions = await Promise.all(position_names.map(async (position_name) => {
-      return await this.positionRepository.findByName(position_name);
-    }))
+    const positions = await Promise.all(
+      position_names.map(async (position_name) => {
+        return await this.positionRepository.findByName(position_name);
+      }),
+    );
 
     if (positions.includes(null)) {
-      throw new HttpException('포지션을 찾을 수 없습니다.', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        '포지션을 찾을 수 없습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
-    
+
     user.positions = positions;
 
-    return await this.userRepository.save(user);  // 수정된 사용자 정보 저장
+    return await this.userRepository.save(user); // 수정된 사용자 정보 저장
   }
 
-  async updateProfileImage(userId: number, profileImageUrl: string): Promise<void> {
+  async updateProfileImage(
+    userId: number,
+    profileImageUrl: string,
+  ): Promise<void> {
     const user = await this.userRepository.findById(userId);
-  
+
     if (!user) {
-      throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        '사용자를 찾을 수 없습니다.',
+        HttpStatus.NOT_FOUND,
+      );
     }
-  
+
     user.profile_image = profileImageUrl;
     await this.userRepository.save(user);
   }
-
-
 }
