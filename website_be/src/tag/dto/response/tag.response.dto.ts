@@ -25,11 +25,32 @@ export class TagResponseDto {
     return {
       id: tag.id,
       title: tag.title,
-      tag_property: tag.tag_property 
-      ? {
+      tag_property:  
+      {
           id: tag.tag_property.id,
           tag_property: tag.tag_property.tag_property,
-      } : null,
+      },
     }
-  } 
+  }
+}
+
+export class TagUserResponseDto extends TagResponseDto {
+  @ApiProperty({
+    example: true,
+    description: "Is attend",
+  })
+  is_attend: boolean;
+  
+  static rawof(tag) {
+    return {
+      id: tag.tag_id,
+      title: tag.tag_title,
+      tag_property:
+      {
+          id: tag.property_id,
+          tag_property: tag.property_tag_property,
+      },
+      is_attend: tag.is_attend == 1 ? true : false,
+    }
+  }
 }
