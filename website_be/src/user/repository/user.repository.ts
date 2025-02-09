@@ -11,11 +11,24 @@ export class UserRepository extends Repository<User> {
     super(repository.target, repository.manager);
   }
 
-  async findAll() {
+  async findAll(page: number, role_id: number) {
+    const limit = 15;
     const queryBuilder = this.repository.createQueryBuilder('user');
+    
     queryBuilder.leftJoinAndSelect('user.user_roles', 'user_role');
     queryBuilder.leftJoinAndSelect('user_role.role', 'role');
-    return queryBuilder.getMany();
+
+    if (role_id) {
+      queryBuilder.where('role.id = :role_id', { role_id });
+    }
+
+    queryBuilder.orderBy('user.nickname', 'ASC');
+    queryBuilder.skip((page - 1) * limit);
+    queryBuilder.take(limit);
+    const [users, total] = await queryBuilder.getManyAndCount();
+
+    const max_size = Math.ceil(total / limit);
+    return { users, max_size };
   }
 
   async findById(id: number) {

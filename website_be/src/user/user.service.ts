@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UpdateUserRoleDto } from './dto/request/update-user.role.dto';
 import { checkRoleHigher, getRoleIdByName } from 'src/common/enums/user-role.enum';
-import { UserInfoResponseDto } from './dto/response/user.response.dto';
+import { UserInfoPaginatedResponseDto, UserInfoResponseDto } from './dto/response/user.response.dto';
 import { UpdateUserAuthorityDto } from './dto/request/update-user.authority.dto';
 import { UserAuthorityResponseDto } from './dto/response/user.authority.response.dto';
 import { Authority } from './entities/authority.entity';
@@ -42,8 +42,13 @@ export class UserService {
     }
   }
 
-  async findAll() {
-    return this.userRepository.findAll();
+  async findAll(page: number, role?: string): Promise<UserInfoPaginatedResponseDto> {
+    let role_id = null;
+    if (role) {
+      role_id = getRoleIdByName(role);
+    }
+    const {users, max_size} = await this.userRepository.findAll(page, role_id);
+    return {data : users.map(user => UserInfoResponseDto.of(user)), max_size};
   }
 
   async updateRoles(admin: User, updateUserRoleDto: UpdateUserRoleDto): Promise<UserInfoResponseDto> {

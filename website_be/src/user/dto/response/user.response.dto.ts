@@ -30,3 +30,18 @@ export class UserInfoResponseDto {
     }
   }
 }
+
+
+export class UserInfoPaginatedResponseDto {
+  @ApiProperty({
+    type: [UserInfoResponseDto],
+    description: "User Info List",
+  })
+  data: UserInfoResponseDto[];
+
+  @ApiProperty({
+    example: 1,
+    description: "Total Count",
+  })
+  max_size: number;
+}
