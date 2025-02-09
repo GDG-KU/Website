@@ -22,7 +22,9 @@ import { MypageModule } from 'src/mypage/mypage.module';
 import { History } from 'src/mypage/entities/history.entity';
 import { Position } from 'src/user/entities/position.entity';
 import { UserRole } from 'src/user/entities/user_role.entity';
+import { FaqModule } from 'src/faq/faq.module';
 import {PointModule} from "../point/point.module";
+import { Faq } from 'src/faq/entities/faq.entity';
 
 @Module({
   imports: [
@@ -37,7 +39,7 @@ import {PointModule} from "../point/point.module";
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History, Position, UserRole],
+      entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History, Position, UserRole, Faq],
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
       charset: 'utf8mb4',
@@ -54,6 +56,7 @@ import {PointModule} from "../point/point.module";
     AttendanceModule,
     MypageModule,
     PointModule,
+    FaqModule,
   ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],
