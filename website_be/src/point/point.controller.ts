@@ -66,12 +66,17 @@ export class PointController {
   @Get('history/:userId')
   @ApiOperation({ summary: '포인트 히스토리 조회' })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
+  @ApiQuery({ name: 'role', required: false, type: String })
   @ApiQuery({ name: 'cursor', required: false, type: Number })
   @SetAuthority('PointManager')
   async getPointHistory(
     @Param('userId') userId: number,
+    @Query('role') role?: string,
     @Query('cursor') cursor?: number,
   ): Promise<MypageHistoryResponseDto[]> {
-    return this.mypageService.getHistory(userId, cursor);
+    if (role) {
+      getRoleIdByName(role); // for validation
+    }
+    return this.mypageService.getHistoryWithRole(userId, role, cursor);
   }
 }
