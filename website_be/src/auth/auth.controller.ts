@@ -49,8 +49,9 @@ export class AuthController {
     // refresh token 검증 후 access token, refresh token 재발급
     const {access_token, refresh_token}= await this.authService.refreshTokens(req.cookies['refresh_token'])
     
-    // refresh token 쿠키에 저장
-    res.cookie('refresh_token', refresh_token, { httpOnly: true});
+    // access token, refresh token 쿠키에 저장
+    res.cookie('access_token', access_token, { httpOnly: true, sameSite: 'none', secure: true, maxAge: 3600000, domain: '.koreauniv.gdgoc.kr'}); //1시간만 유효
+    res.cookie('refresh_token', refresh_token, { httpOnly: true, sameSite: 'none', secure: true, maxAge: 604800000, domain: '.koreauniv.gdgoc.kr'}); //7일 유효
     
     return access_token;
   }
