@@ -6,7 +6,7 @@ import { JwtAuthGuard } from './security/jwt.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { TokensResponseDto } from './dto/response/tokens.response.dto';
 import { RefreshDto } from './dto/request/refresh.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -45,9 +45,9 @@ export class AuthController {
     type: TokensResponseDto,
   })
   // refresh token
-  async refresh(@Body() refreshDto: RefreshDto, @Res({ passthrough: true }) res: Response){
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response){
     // refresh token 검증 후 access token, refresh token 재발급
-    const {access_token, refresh_token}= await this.authService.refreshTokens(refreshDto.refresh_token)
+    const {access_token, refresh_token}= await this.authService.refreshTokens(req.cookies['refresh_token'])
     
     // refresh token 쿠키에 저장
     res.cookie('refresh_token', refresh_token, { httpOnly: true});
