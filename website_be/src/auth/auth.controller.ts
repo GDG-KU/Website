@@ -47,6 +47,7 @@ export class AuthController {
   // refresh token
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response){
     // refresh token 검증 후 access token, refresh token 재발급
+    console.log(req.cookies);
     const {access_token, refresh_token}= await this.authService.refreshTokens(req.cookies['refresh_token'])
     
     // access token, refresh token 쿠키에 저장
