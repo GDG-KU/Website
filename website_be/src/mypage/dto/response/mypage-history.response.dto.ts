@@ -27,12 +27,23 @@ export class MypageHistoryResponseDto {
   })
   reason: string;
 
+  @ApiProperty({
+    example: "10",
+    description: "누적 포인트",
+  })
+  accumulated_point: number;
 
   @ApiProperty({
     example: "2025-01-01",
     description: "포인트 변경 날짜",
   })
   date: string;
+
+  @ApiProperty({
+    example: false,
+    description: "삭제 여부",
+  })
+  is_deleted: boolean;
 
 
   static of(history: History) {
@@ -42,6 +53,7 @@ export class MypageHistoryResponseDto {
     dto.role = history.role;
     dto.reason = history.reason;
     dto.date = history.created_at.toISOString().split('T')[0];
+    dto.is_deleted = history.is_deleted;
     return dto;
   }
 }

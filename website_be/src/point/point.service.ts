@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRoleRepository } from '../user/repository/user_role.repository';
 import { DataSource } from 'typeorm';
 import { RolePointResponseDto } from '../user/dto/response/rolepoint.reponse.dto';
 import { HistoryRepository } from '../mypage/repository/history.repository';
 import { History } from '../mypage/entities/history.entity';
 import { UserRepository } from '../user/repository/user.repository';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PointService {
@@ -50,5 +51,16 @@ export class PointService {
       await manager.save(userRole);
     });
     return RolePointResponseDto.of(userRole);
+  }
+
+  async restoreOrDelete(historyId: number, is_deleted: boolean): Promise<void> {
+    const history = await this.historyRepository.findById(historyId);
+
+    if(!history) {
+      throw new NotFoundException('History not found');
+    }
+
+    history.is_deleted = is_deleted;
+    await this.historyRepository.save(history);
   }
 }
