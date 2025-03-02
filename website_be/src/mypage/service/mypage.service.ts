@@ -144,10 +144,7 @@ export class MypageService {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new HttpException(
-        '사용자를 찾을 수 없습니다.',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
 
     user.profile_image = profileImageUrl;
