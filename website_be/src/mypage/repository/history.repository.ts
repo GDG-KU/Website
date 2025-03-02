@@ -4,10 +4,12 @@ import { History } from '../entities/history.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class HistoryRepository {
+export class HistoryRepository extends Repository<History> {
   constructor(
     @InjectRepository(History) private readonly repository: Repository<History>,
-  ) {}
+  ) {
+    super(repository.target, repository.manager);
+  }
 
   async findById(id: number) {
     return await this.repository.findOne({ where: { id } });
