@@ -92,11 +92,10 @@ export class MypageService {
 
     const no_point_histories = histories.map((history) => HistoryWithPointResponseDto.of(history));
 
-    return no_point_histories.map((history, index) => {
-      if (index === 0) {
+    return no_point_histories.map((history) => {
+      if (!history.is_deleted) {
         history.accumulated_point = point;
-      } else {
-        history.accumulated_point = no_point_histories[index - 1].accumulated_point - no_point_histories[index - 1].point_change;
+        point = history.accumulated_point - history.point_change;
       }
       return history
     });

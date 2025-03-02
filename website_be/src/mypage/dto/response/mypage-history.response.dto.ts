@@ -72,6 +72,7 @@ export class HistoryWithPointResponseDto extends MypageHistoryResponseDto {
     dto.role = history.role;
     dto.reason = history.reason;
     dto.date = history.created_at.toISOString().split('T')[0];
+    dto.is_deleted = history.is_deleted;
     dto.accumulated_point = null;
     return dto;
   }

@@ -32,7 +32,7 @@ export class AuthController {
     // access_token, refresh token 쿠키에 저장
     res.cookie('access_token', access_token, { httpOnly: true, sameSite: 'none', secure: true, maxAge: 3600000, domain: '.koreauniv.gdgoc.kr'}); //1시간만 유효
     res.cookie('refresh_token', refresh_token, { httpOnly: true, sameSite: 'none', secure: true, maxAge: 604800000, domain: '.koreauniv.gdgoc.kr'}); //7일 유효
-
+    console.log(access_token);
     return res.redirect('https://koreauniv.gdgoc.kr/');
   }
 
