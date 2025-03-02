@@ -9,6 +9,7 @@ import { JwtAuthGuard } from "src/auth/security/jwt.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GCPStorageService } from "./service/gcp-storage.service";
 import { AuthorityGuard } from "src/auth/security/authority.guard";
+import { MypageImageUrlDto } from "./dto/request/mypage-image.request.dto";
 
 
 @ApiTags("Mypage")
@@ -95,45 +96,24 @@ export class MypageController {
   */
 
   @Patch("profile/image")
-  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: "프로필 이미지 수정" })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
   @ApiResponse({ status: 200, description: '이미지가 성공적으로 수정되었습니다.', type: String })
-  async updateProfileImage(
-    @Req() req,
-    @UploadedFile() file?: Express.Multer.File
-  ) {
+  async updateProfileImage( @Req() req, @Body() mypageImageUrlDto : MypageImageUrlDto) {
     // file이 없으면 이미지 삭제
     const user_id = req.user.id;
-    const user = await this.mypageService.getProfile(user_id);
-    if (!file && !user.profile_image) {
-      throw new BadRequestException('프로필 이미지가 없습니다.');
-    }
+    const url = mypageImageUrlDto.url;
 
-    if(user.profile_image) {
-      const fileName = user.profile_image.split('/').pop(); // URL에서 파일명 추출
-      await this.gcpStorageService.deleteFile(fileName);
-    }
+    this.mypageService.updateProfileImage(user_id, url);
+    return { message: '프로필 이미지가 수정되었습니다.' };
+  }
 
-    if (!file) {
-      await this.mypageService.updateProfileImage(user_id, null); // 이미지 URL 초기화
-      return { url: null };
-    }
-
-    const url = await this.gcpStorageService.uploadFile(user_id, file);
-    await this.mypageService.updateProfileImage(user_id, url);
-    return { url };
+  @Delete("profile/image")
+  @ApiOperation({ summary: "프로필 이미지 삭제" })
+  @ApiResponse({ status: 200, description: '이미지가 성공적으로 삭제되었습니다.' })
+  async deleteProfileImage(@Req() req) {
+    const user_id = req.user.id;
+    this.mypageService.updateProfileImage(user_id, '');
+    return { message: '프로필 이미지가 삭제되었습니다.' };
   }
 
 

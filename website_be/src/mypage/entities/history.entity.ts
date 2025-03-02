@@ -1,5 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
 import {
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -29,6 +30,10 @@ export class History {
   @Column({ name: 'accumulated_point', type: 'int', nullable: false })
   accumulated_point: number;
 
+  @Column({ name: 'is_deleted', type: 'boolean', default: false})
+  is_deleted: boolean;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   created_at: Date;
+
 }

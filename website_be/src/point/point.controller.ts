@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -78,5 +80,25 @@ export class PointController {
       getRoleIdByName(role); // for validation
     }
     return this.mypageService.getHistoryWithRole(userId, role, cursor);
+  }
+
+  @Patch('history/:historyId')
+  @ApiOperation({ summary: '포인트 히스토리 복구' })
+  @SetAuthority('PointManager')
+  async restorePointHistory(
+    @Param('historyId') historyId: number,
+  ) {
+    this.pointService.restoreOrDelete(historyId, false);
+    return { message: '포인트 히스토리 복구 성공' };
+  }
+
+  @Delete('history/:historyId')
+  @ApiOperation({ summary: '포인트 히스토리 삭제' })
+  @SetAuthority('PointManager')
+  async deletePointHistory(
+    @Param('historyId') historyId: number,
+  ) {
+    this.pointService.restoreOrDelete(historyId, true);
+    return { message: '포인트 히스토리 삭제 성공' };
   }
 }
