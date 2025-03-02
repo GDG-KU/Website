@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -25,6 +25,7 @@ import { UserRole } from 'src/user/entities/user_role.entity';
 import { FaqModule } from 'src/faq/faq.module';
 import {PointModule} from "../point/point.module";
 import { Faq } from 'src/faq/entities/faq.entity';
+import { LoggerMiddleWare } from 'src/common/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -61,4 +62,8 @@ import { Faq } from 'src/faq/entities/faq.entity';
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer.apply(LoggerMiddleWare).forRoutes('*');
+  }
+}
