@@ -15,6 +15,13 @@ export class HistoryRepository extends Repository<History> {
     return await this.repository.findOne({ where: { id } });
   }
 
+  async findByIdWithUser(id: number) {
+    return await this.repository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+  }
+
   // async findByUserId(user_id: number, limit: number, cursor?: number) {
   //   const queryBuilder = this.repository.createQueryBuilder('history');
 
