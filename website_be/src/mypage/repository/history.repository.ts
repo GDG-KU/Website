@@ -13,19 +13,19 @@ export class HistoryRepository {
     return await this.repository.findOne({ where: { id } });
   }
 
-  async findByUserId(userId: number, limit: number, cursor?: number) {
-    const queryBuilder = this.repository.createQueryBuilder('history');
+  // async findByUserId(user_id: number, limit: number, cursor?: number) {
+  //   const queryBuilder = this.repository.createQueryBuilder('history');
 
-    queryBuilder.where('history.user_id = :userId', { userId });
+  //   queryBuilder.where('history.user_id = :user_id', { user_id });
 
-    if (cursor) {
-      queryBuilder.andWhere('history.id < :cursor', { cursor });
-    }
+  //   if (cursor) {
+  //     queryBuilder.andWhere('history.id < :cursor', { cursor });
+  //   }
 
-    queryBuilder.orderBy('history.id', 'DESC');
-    queryBuilder.limit(limit);
-    return queryBuilder.getMany();
-  }
+  //   queryBuilder.orderBy('history.id', 'DESC');
+  //   queryBuilder.limit(limit);
+  //   return queryBuilder.getMany();
+  // }
 
   async findByUserIdWithRole(
     userId: number,

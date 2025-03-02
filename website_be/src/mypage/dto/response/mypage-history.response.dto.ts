@@ -15,7 +15,7 @@ export class MypageHistoryResponseDto {
   point_change: number;
 
   @ApiProperty({
-    example: "DevRel",
+    example: "Devrel",
     description: "역할",
   })
   role: string;
@@ -27,11 +27,6 @@ export class MypageHistoryResponseDto {
   })
   reason: string;
 
-  @ApiProperty({
-    example: "10",
-    description: "누적 포인트",
-  })
-  accumulated_point: number;
 
   @ApiProperty({
     example: "2025-01-01",
@@ -46,8 +41,26 @@ export class MypageHistoryResponseDto {
     dto.point_change = history.point_change;
     dto.role = history.role;
     dto.reason = history.reason;
-    dto.accumulated_point = history.accumulated_point;
     dto.date = history.created_at.toISOString().split('T')[0];
+    return dto;
+  }
+}
+
+export class HistoryWithPointResponseDto extends MypageHistoryResponseDto {
+  @ApiProperty({
+    example: 100,
+    description: "누적 포인트",
+  })
+  accumulated_point: number;
+
+  static of(history: History) {
+    const dto = new HistoryWithPointResponseDto();
+    dto.id = history.id;
+    dto.point_change = history.point_change;
+    dto.role = history.role;
+    dto.reason = history.reason;
+    dto.date = history.created_at.toISOString().split('T')[0];
+    dto.accumulated_point = null;
     return dto;
   }
 }
