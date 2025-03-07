@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Query, Req, UseGuards, Post, Put, Delete,
 import { MypageService } from "./service/mypage.service";
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags, ApiBearerAuth, ApiBody, ApiConsumes } from "@nestjs/swagger";
 import { MypageProfileResponseDto } from "./dto/response/mypage-profile.response.dto";
-import { MypageHistoryResponseDto } from "./dto/response/mypage-history.response.dto";
+import { HistoryWithPointResponseDto, MypageHistoryResponseDto } from "./dto/response/mypage-history.response.dto";
 import { User } from "src/user/entities/user.entity";
 import { UpdateUserDto } from "./dto/request/mypage-profile.request.dto";
 import { JwtAuthGuard } from "src/auth/security/jwt.guard";
@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { GCPStorageService } from "./service/gcp-storage.service";
 import { AuthorityGuard } from "src/auth/security/authority.guard";
 import { MypageImageUrlDto } from "./dto/request/mypage-image.request.dto";
+import { getRoleIdByName } from "src/common/enums/user-role.enum";
 
 
 @ApiTags("Mypage")
@@ -32,11 +33,16 @@ export class MypageController {
 
   @Get("history")
   @ApiOperation({ summary: "포인트 히스토리 조회" })
-  @ApiResponse({ type: [MypageHistoryResponseDto] })
+  @ApiResponse({ type: [HistoryWithPointResponseDto] })
+  @ApiQuery({ name: "role", type: String })
   @ApiQuery({ name: "cursor", required: false, type: Number })
-  async getHistory(@Req() req, @Query("cursor") cursor?: number): Promise<MypageHistoryResponseDto[]> {
+  async getHistory(@Req() req, @Query("role") role: string, @Query("cursor") cursor?: number): Promise<HistoryWithPointResponseDto[]> {
     const { user } = req;
-    return this.mypageService.getHistory(user.id, cursor);
+    
+    // check role is valid
+    getRoleIdByName(role);
+
+    return this.mypageService.getHistoryWithAccumulatedPoint(user.id, role, cursor);
   }
 
   @Put("profile")
@@ -115,8 +121,6 @@ export class MypageController {
     this.mypageService.updateProfileImage(user_id, '');
     return { message: '프로필 이미지가 삭제되었습니다.' };
   }
-
-
 
 
   @Get("profile/image")
