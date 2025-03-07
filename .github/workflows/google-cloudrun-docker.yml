@@ -38,7 +38,7 @@ env:
   PROJECT_ID: 'elevated-disk-442509-t9' # TODO: update to your Google Cloud project ID
   REGION: 'asia-northeast3' # TODO: update to your region
   SERVICE: 'website-api' # TODO: update to your service name
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/689805168737/locations/global/workloadIdentityPools/website-pool-id/subject/SUBJECT_ATTRIBUTE_VALUE' # TODO: update to your workload identity provider
+  WORKLOAD_IDENTITY_PROVIDER: 'principal://iam.googleapis.com/projects/689805168737/locations/global/workloadIdentityPools/website-pool-id/subject/SUBJECT_ATTRIBUTE_VALUE' # TODO: update to your workload identity provider
 
 jobs:
   deploy:
