@@ -19,7 +19,7 @@ export class UserService {
     private readonly user_roleRepository: UserRoleRepository,
     private dataSources: DataSource,
   ) {}
- 
+/*
   async create(createUserDto) {
     const { role_ids, ...userInfo } = createUserDto;
 
@@ -41,6 +41,7 @@ export class UserService {
       await queryRunner.release();
     }
   }
+*/
 
   async findAll(page: number, role?: string): Promise<UserInfoPaginatedResponseDto> {
     let role_id = null;
