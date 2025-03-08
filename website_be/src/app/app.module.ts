@@ -33,13 +33,13 @@ import { LoggerMiddleWare } from 'src/common/middlewares/logger.middleware';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
-      // extra: {
-      //   socketPath: process.env.DB_SOCKETPATH
-      // },
+      extra: {
+        socketPath: process.env.DB_SOCKETPATH
+      },
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
+      database: process.env.DB_DATABASE,  
       entities: [User, Notice, Authority, Role, Event, Tag, TagProperty, Attendance, History, Position, UserRole, Faq],
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
