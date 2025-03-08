@@ -15,19 +15,26 @@ export class HistoryRepository extends Repository<History> {
     return await this.repository.findOne({ where: { id } });
   }
 
-  async findByUserId(userId: number, limit: number, cursor?: number) {
-    const queryBuilder = this.repository.createQueryBuilder('history');
-
-    queryBuilder.where('history.user_id = :userId', { userId });
-
-    if (cursor) {
-      queryBuilder.andWhere('history.id < :cursor', { cursor });
-    }
-
-    queryBuilder.orderBy('history.id', 'DESC');
-    queryBuilder.limit(limit);
-    return queryBuilder.getMany();
+  async findByIdWithUser(id: number) {
+    return await this.repository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
   }
+
+  // async findByUserId(user_id: number, limit: number, cursor?: number) {
+  //   const queryBuilder = this.repository.createQueryBuilder('history');
+
+  //   queryBuilder.where('history.user_id = :user_id', { user_id });
+
+  //   if (cursor) {
+  //     queryBuilder.andWhere('history.id < :cursor', { cursor });
+  //   }
+
+  //   queryBuilder.orderBy('history.id', 'DESC');
+  //   queryBuilder.limit(limit);
+  //   return queryBuilder.getMany();
+  // }
 
   async findByUserIdWithRole(
     userId: number,

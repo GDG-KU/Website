@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -7,7 +8,7 @@ import {
 import { HistoryRepository } from '../repository/history.repository';
 import { UserRepository } from 'src/user/repository/user.repository';
 import { MypageProfileResponseDto } from '../dto/response/mypage-profile.response.dto';
-import { MypageHistoryResponseDto } from '../dto/response/mypage-history.response.dto';
+import { HistoryWithPointResponseDto, MypageHistoryResponseDto } from '../dto/response/mypage-history.response.dto';
 import { UpdateUserDto } from '../dto/request/mypage-profile.request.dto';
 import { User } from 'src/user/entities/user.entity';
 import { PositionRepository } from 'src/user/repository/position.repository';
@@ -27,7 +28,7 @@ export class MypageService {
     });
 
     if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
 
     // roles가 undefined인 경우 빈 배열로 처리
@@ -55,18 +56,49 @@ export class MypageService {
     };
   }
 
-  async getHistory(
+
+  async getHistoryWithAccumulatedPoint(
     userId: number,
+    role: string,
     cursor?: number,
-  ): Promise<MypageHistoryResponseDto[]> {
+  ): Promise<HistoryWithPointResponseDto[]> {
     const limit = 10;
 
-    const histories = await this.historyRepository.findByUserId(
+    const histories = await this.historyRepository.findByUserIdWithRole(
       userId,
+      role,
       limit,
       cursor,
     );
-    return histories.map((history) => MypageHistoryResponseDto.of(history));
+
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    let point = null;
+
+    for (const relation of user.user_roles) {
+      if (relation.role.role_type === role) {
+        point = relation.point;
+        break;
+      }
+    }
+
+    if (point === null) {
+      throw new BadRequestException('사용자가 해당 role을 가지고 있지 않습니다.');
+    }
+
+    const no_point_histories = histories.map((history) => HistoryWithPointResponseDto.of(history));
+
+    return no_point_histories.map((history) => {
+      if (!history.is_deleted) {
+        history.accumulated_point = point;
+        point = history.accumulated_point - history.point_change;
+      }
+      return history
+    });
   }
 
   async getHistoryWithRole(
@@ -92,10 +124,7 @@ export class MypageService {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new HttpException(
-        '사용자를 찾을 수 없습니다.',
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
 
     // 학번 중복 검사
@@ -107,10 +136,7 @@ export class MypageService {
       existingUserWithStudentNumber &&
       existingUserWithStudentNumber.id !== userId
     ) {
-      throw new HttpException(
-        '이미 존재하는 학번입니다. 다른 학번을 입력해주세요.',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('이미 사용 중인 학번입니다.');
     }
 
     user.nickname = updateUserDto.nickname;
@@ -126,10 +152,7 @@ export class MypageService {
     );
 
     if (positions.includes(null)) {
-      throw new HttpException(
-        '포지션을 찾을 수 없습니다.',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException('포지션 정보를 찾을 수 없습니다.');
     }
 
     user.positions = positions;
