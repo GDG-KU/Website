@@ -3,7 +3,9 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { Type } from "class-transformer";
 import { mock } from "node:test";
 import { getRoleIdByName } from "src/common/enums/user-role.enum";
+import { UserAuthorityResponseDto } from "src/user/dto/response/user.authority.response.dto";
 import { UserInfoResponseDto } from "src/user/dto/response/user.response.dto";
+import { Authority } from "src/user/entities/authority.entity";
 import { User } from "src/user/entities/user.entity";
 import { UserRepository } from "src/user/repository/user.repository";
 import { UserRoleRepository } from "src/user/repository/user_role.repository";
@@ -165,6 +167,51 @@ describe('UserService', () => {
 
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.release).toHaveBeenCalled();
+    });
+  });
+
+
+  describe('updateAuthorities', () => {
+    it('should throw NotFoundException when user not found', async () => {
+      const mockAdmin = mockUsers[0];
+      const mockUpdateUserRoleDto = { user_id: 100, roles: ['Lead'] };
+      
+      (userRepository.findById as jest.Mock).mockResolvedValueOnce(null);
+
+      await expect(service.updateRoles(mockAdmin, mockUpdateUserRoleDto))
+        .rejects.toThrow('User not found');
+      expect(userRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should update user roles', async () => {
+      const mockAdmin = mockUsers[0];
+      const mockUser = mockUsers[1];
+      const mockUpdateUserAuthorityDto = { user_id: mockUser.id, authorities: ['AttendanceManager'] };
+      const mockModifiedUser = {...mockUser};
+      mockModifiedUser.authoritys = [{ id: 3, type: 'AttendanceManager' } as Authority];
+
+      (userRepository.findById as jest.Mock)
+        .mockResolvedValueOnce(mockUser);
+      (userRepository.save as jest.Mock)
+        .mockResolvedValueOnce(mockModifiedUser);
+
+      const result = await service.updateAuthorities(mockAdmin, mockUpdateUserAuthorityDto);
+
+      expect(userRepository.findById).toHaveBeenCalledWith(mockUser.id);
+      expect(userRepository.save).toHaveBeenCalledWith(mockModifiedUser);
+      expect(result).toEqual(UserAuthorityResponseDto.of(mockModifiedUser));
+    });
+
+    it('should throw error when admin role is lower than user role', async () => {
+      const mockAdmin = mockUsers[1];
+      const mockUser = mockUsers[0];
+      const mockUpdateUserAuthorityDto = { user_id: mockUser.id, authorities: ['AttendanceManager'] };
+
+      (userRepository.findById as jest.Mock).mockResolvedValueOnce(mockUser);
+
+      await expect(service.updateAuthorities(mockAdmin, mockUpdateUserAuthorityDto))
+        .rejects.toThrow('권한이 없습니다.');
+      expect(userRepository.save).not.toHaveBeenCalled();
     });
   });
 

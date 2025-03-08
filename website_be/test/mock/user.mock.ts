@@ -31,6 +31,7 @@ export const mockUsers: User[] = [
     profile_image: "https://cdn.fakercloud.com/avatars/and/f12445.png",
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles: [mockLeadRole],
+    authoritys: [],
   } as User,
   {
     id: 2,
@@ -42,6 +43,7 @@ export const mockUsers: User[] = [
     profile_image: "https://cdn.fakercloud.com/avatars/and/763412.png",
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles: [mockDevrelRole],
+    authoritys: [],
   } as User,
   {
     id: 3,
@@ -53,6 +55,7 @@ export const mockUsers: User[] = [
     profile_image: "https://cdn.fakercloud.com/avatars/and/621732.png",
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles: [mockOragnizerRole],
+    authoritys: [],
   } as User,
   {
     id: 4,
@@ -64,6 +67,7 @@ export const mockUsers: User[] = [
     profile_image: "https://cdn.fakercloud.com/avatars/and/1_24234.png",
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles : [mockMemberRole],
+    authoritys: [],
   } as User
 ]
   
