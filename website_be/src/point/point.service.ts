@@ -31,6 +31,7 @@ export class PointService {
     userId: number,
     roleId: number,
     point: number,
+    reason: string,
   ): Promise<RolePointResponseDto> {
     const userRole = await this.userRoleRepository.findOne({
       where: {
@@ -46,7 +47,7 @@ export class PointService {
       history.user = userRole.user;
       history.point_change = point;
       history.role = userRole.role.role_type;
-      history.reason = 'todo';
+      history.reason = reason;
       history.accumulated_point = userRole.point;
       await manager.save(history);
       await manager.save(userRole);
