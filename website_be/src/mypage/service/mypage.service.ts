@@ -44,6 +44,7 @@ export class MypageService {
 
     const positionNames = user.positions.map((position) => position.name);
     return {
+      id: user.id,
       nickname: user.nickname,
       role: role,
       email: user.email, // 이메일 추가

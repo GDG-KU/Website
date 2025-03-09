@@ -2,6 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 import { RolePointResponseDto } from "src/user/dto/response/rolepoint.reponse.dto";
 
 export class MypageProfileResponseDto {
+  @ApiProperty({ example: 1 })
+  id: number;
+
   @ApiProperty({ example: '김구글' })
   nickname: string;
 
