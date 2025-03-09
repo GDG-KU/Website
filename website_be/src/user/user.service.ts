@@ -19,7 +19,7 @@ export class UserService {
     private readonly user_roleRepository: UserRoleRepository,
     private dataSources: DataSource,
   ) {}
- 
+/*
   async create(createUserDto) {
     const { role_ids, ...userInfo } = createUserDto;
 
@@ -41,6 +41,7 @@ export class UserService {
       await queryRunner.release();
     }
   }
+*/
 
   async findAll(page: number, role?: string): Promise<UserInfoPaginatedResponseDto> {
     let role_id = null;
@@ -72,7 +73,6 @@ export class UserService {
     checkRoleHigher(admin_role_ids, insert_role_ids);
     checkRoleHigher(admin_role_ids, delete_role_ids);
     
-    
     const queryRunner = this.dataSources.createQueryRunner();
 
     await queryRunner.connect();
@@ -83,7 +83,7 @@ export class UserService {
       await this.user_roleRepository.deleteUserRoles(user.id, delete_role_ids, queryRunner);
 
       await queryRunner.commitTransaction();
-  
+
       const updated_user = await this.userRepository.findById(updateUserRoleDto.user_id);
 
       // 프론트에서 권한 부여 추가시 지워질 코드

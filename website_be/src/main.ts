@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { HttpExceptionFilter } from './common/filters/exception.filter';
+// import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,6 +34,10 @@ async function bootstrap() {
     origin: "https://koreauniv.gdgoc.kr",
     credentials: true,
   });
+
+  // const yaml = require('yaml');
+  // fs.writeFileSync('./swagger.yaml', yaml.stringify(document));
+  // SwaggerModule.setup("/api", app, document);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
