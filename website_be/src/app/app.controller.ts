@@ -7,6 +7,6 @@ export class AppController {
 
   @Get()
   getHello() {
-    return { message: 'Hello Cloud Run' };
+    return { message: 'Hello GDG KU' };
   }
 }

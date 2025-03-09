@@ -41,6 +41,10 @@ export class PointService {
       relations: ['role', 'user'],
     });
 
+    if(!userRole) {
+      throw new NotFoundException('User role not found');
+    }
+
     await this.dataSource.transaction(async (manager) => {
       userRole.point += point;
       const history: History = new History();
