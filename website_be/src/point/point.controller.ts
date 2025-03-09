@@ -49,8 +49,7 @@ export class PointController {
     @Req() req,
     @Param('userId') userId: number,
   ): Promise<RolePointResponseDto[]> {
-    const { id } = req.user;
-    return this.pointService.getUserPoint(id);
+    return this.pointService.getUserPoint(userId);
   }
 
   @Post()
