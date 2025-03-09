@@ -18,4 +18,10 @@ export class UserPointDto {
     description: '증가, 감소할 point',
   })
   point: number;
+
+  @ApiProperty({
+    example: '이유',
+    description: '변경 이유',
+  })
+  reason: string;
 }

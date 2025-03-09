@@ -62,6 +62,7 @@ export class PointController {
       userPoint.userId,
       getRoleIdByName(userPoint.role),
       userPoint.point,
+      userPoint.reason,
     );
   }
 
