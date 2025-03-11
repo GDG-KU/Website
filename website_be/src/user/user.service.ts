@@ -9,7 +9,7 @@ import { UserInfoResponseDto } from './dto/response/user.response.dto';
 import { UpdateUserAuthorityDto } from './dto/request/update-user.authority.dto';
 import { UserAuthorityResponseDto } from './dto/response/user.authority.response.dto';
 import { Authority } from './entities/authority.entity';
-import { getAuthorityIdByName } from 'src/common/enums/user-authority.enum';
+import { AuthorityEnum, getAuthorityIdByName } from 'src/common/enums/user-authority.enum';
 
 
 @Injectable()
@@ -84,7 +84,7 @@ export class UserService {
       // 프론트에서 권한 부여 추가시 지워질 코드
       // Core 이상은 모든 권한 부여여
       if(Math.max(...user_role_ids) <= 3){
-        this.updateAuthorities(admin, {user_id: user.id, authorities: ['PointManager', 'CalendarManager', 'AttendanceManager', 'RoleManager', 'AuthorityManager']});
+        this.updateAuthorities(admin, {user_id: user.id, authorities: Object.keys(AuthorityEnum).filter(key => isNaN(Number(key)))});
       }
 
 
@@ -99,6 +99,7 @@ export class UserService {
   }
 
   async updateAuthorities(admin: User, updateUserAuthorityDto: UpdateUserAuthorityDto): Promise<UserAuthorityResponseDto> {
+    console.log(updateUserAuthorityDto);
     const { user_id, authorities } = updateUserAuthorityDto;
 
     const user = await this.userRepository.findById(user_id);

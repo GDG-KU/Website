@@ -9,7 +9,8 @@ VALUES
 (2, 'CalendarManager'),
 (3, 'AttendanceManager'),
 (4, 'RoleManager'),
-(5, 'AuthorityManager');
+(5, 'AuthorityManager'),
+(6, 'FaqManager'),
 */
 @Entity({ schema: 'authority', name: 'authority' })
 @Unique(['type'])
