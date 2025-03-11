@@ -29,5 +29,5 @@ export class UserPointDto {
     example: '1주차',
     description: '변경 이유에 대한 날짜',
   })
-  reasonDate: string; 
+  reason_date: string; 
 }
