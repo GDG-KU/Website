@@ -27,7 +27,7 @@ export class History {
   @Column({ name: 'reason', type: 'varchar', length: 255 })
   reason: string;
   
-  @Column('varchar', { length: 50 })
+  @Column({ name: 'reason_date', type: 'varchar', length: 30 })
   reason_date: string; 
 
   @Column({ name: 'accumulated_point', type: 'int', nullable: false })
