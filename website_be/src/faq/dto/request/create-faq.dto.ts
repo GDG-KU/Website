@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateFaqDto {
-  @ApiProperty({ example: 1 })
-  user_id: number;
-
   @ApiProperty({ example: 'NestJS란 무엇인가요?' })
   question: string;
 

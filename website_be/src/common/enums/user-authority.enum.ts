@@ -5,7 +5,8 @@ export enum AuthorityEnum {
   CalendarManager = 2,
   AttendanceManager = 3,
   RoleManager = 4,
-  AuthorityManager = 5
+  AuthorityManager = 5,
+  FaqManager = 6
 }
 
 export function getAuthorityIdByName(authorityName: string): number {

@@ -2,8 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { RolePointResponseDto } from "./rolepoint.reponse.dto";
 import { User } from "src/user/entities/user.entity";
 
-
-export class UserInfoResponseDto {
+export class UserResponseDto {
   @ApiProperty({
     example: 1,
     description: "ID",
@@ -15,7 +14,9 @@ export class UserInfoResponseDto {
     description: "Nickname",
   })
   nickname: string;
+}
 
+export class UserInfoResponseDto extends UserResponseDto {
   @ApiProperty({
     type: [RolePointResponseDto],
     description: "Role and Point",

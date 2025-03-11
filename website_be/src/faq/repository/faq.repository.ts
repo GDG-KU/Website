@@ -1,5 +1,13 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Faq } from '../entities/faq.entity';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-@EntityRepository(Faq)
-export class FaqRepository extends Repository<Faq> {}
+@Injectable()
+export class FaqRepository extends Repository<Faq> {
+  constructor(
+    @InjectRepository(Faq) private readonly repository: Repository<Faq>
+  ) {
+    super(repository.target, repository.manager);
+  }
+};
