@@ -26,6 +26,9 @@ export class History {
 
   @Column({ name: 'reason', type: 'varchar', length: 255 })
   reason: string;
+  
+  @Column({ name: 'reason_date', type: 'varchar', length: 30 })
+  reason_date: string; 
 
   @Column({ name: 'accumulated_point', type: 'int', nullable: false })
   accumulated_point: number;

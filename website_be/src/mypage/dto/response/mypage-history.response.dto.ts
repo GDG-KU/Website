@@ -45,6 +45,12 @@ export class MypageHistoryResponseDto {
   })
   is_deleted: boolean;
 
+  @ApiProperty({
+    example: "2025-01-01",
+    description: "실제 날짜",
+  })
+  reason_date: string;
+
 
   static of(history: History) {
     const dto = new MypageHistoryResponseDto();
@@ -53,6 +59,7 @@ export class MypageHistoryResponseDto {
     dto.role = history.role;
     dto.reason = history.reason;
     dto.date = history.created_at.toISOString().split('T')[0];
+    dto.reason_date = history.reason_date;
     dto.is_deleted = history.is_deleted;
     return dto;
   }
@@ -72,6 +79,7 @@ export class HistoryWithPointResponseDto extends MypageHistoryResponseDto {
     dto.role = history.role;
     dto.reason = history.reason;
     dto.date = history.created_at.toISOString().split('T')[0];
+    dto.reason_date = history.reason_date;
     dto.is_deleted = history.is_deleted;
     dto.accumulated_point = null;
     return dto;
