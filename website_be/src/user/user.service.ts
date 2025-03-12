@@ -104,7 +104,6 @@ export class UserService {
   }
 
   async updateAuthorities(admin: User, updateUserAuthorityDto: UpdateUserAuthorityDto): Promise<UserAuthorityResponseDto> {
-    console.log(updateUserAuthorityDto);
     const { user_id, authorities } = updateUserAuthorityDto;
 
     const user = await this.userRepository.findById(user_id);

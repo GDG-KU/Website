@@ -10,6 +10,6 @@ import { CreateFaqDto } from './dto/request/create-faq.dto';  // DTO 임포트
   imports: [TypeOrmModule.forFeature([Faq])],
   providers: [FaqService, FaqRepository],
   controllers: [FaqController],
-  exports: [FaqService]
+  exports: [FaqService],
 })
 export class FaqModule {}

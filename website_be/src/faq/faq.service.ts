@@ -7,12 +7,12 @@ import { UpdateFaqDto } from './dto/request/update-faq.dto'; // 업데이트 기
 import { NotFoundException } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { FaqResponseDto } from './dto/response/faq.response.dto';
+import { FaqRepository } from './repository/faq.repository';
 
 @Injectable()
 export class FaqService {
   constructor(
-    @InjectRepository(Faq)
-    private faqRepository: Repository<Faq>,
+    private readonly faqRepository: FaqRepository,
   ) {}
 
   // FAQ 생성
@@ -39,9 +39,10 @@ export class FaqService {
 
   // FAQ 여러 개 조회
   async getAllFaqs(): Promise<FaqResponseDto[]> {
-    const faqs: Faq[] = await this.faqRepository.find(
-      { relations: ['user'] } // `user` 엔티티를 함께 로드합니다.
-    );
+    const faqs: Faq[] = await this.faqRepository.find({ 
+      relations: ['user'], // `user` 엔티티를 함께 로드합니다.
+      order: { created_at: 'DESC' }, // `created_at` 필드를 기준으로 내림차순 정렬합니다.  
+    });
 
     return faqs.map(faq => FaqResponseDto.of(faq));
   }

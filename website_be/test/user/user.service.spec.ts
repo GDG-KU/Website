@@ -1,18 +1,14 @@
-import { Y } from "@faker-js/faker/dist/airline-BXaRegOM";
 import { Test, TestingModule } from "@nestjs/testing";
-import { Type } from "class-transformer";
-import { mock } from "node:test";
 import { getRoleIdByName } from "src/common/enums/user-role.enum";
 import { UserAuthorityResponseDto } from "src/user/dto/response/user.authority.response.dto";
 import { UserInfoResponseDto } from "src/user/dto/response/user.response.dto";
 import { Authority } from "src/user/entities/authority.entity";
-import { User } from "src/user/entities/user.entity";
 import { UserRepository } from "src/user/repository/user.repository";
 import { UserRoleRepository } from "src/user/repository/user_role.repository";
 import { UserService } from "src/user/user.service";
 import { mockMemberRole } from "test/mock/role.mock";
 import { mockUsers } from "test/mock/user.mock";
-import { Any, DataSource } from "typeorm";
+import { DataSource } from "typeorm";
 
 
 describe('UserService', () => {
