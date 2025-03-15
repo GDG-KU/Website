@@ -18,7 +18,7 @@ export class TagController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: '태그 조회'})
+  @ApiOperation({ summary: '태그 조회 // admin API'})
   @ApiResponse({
     description: '태그 조회 성공',
     type: [TagUserResponseDto],
@@ -37,14 +37,14 @@ export class TagController {
   }
 
   @Post()
-  @ApiOperation({ summary: '태그 생성'})
+  @ApiOperation({ summary: '태그 생성 // admin API'})
   @SetAuthority('CalendarManager')
   async create(@Body() createTagDto: CreateTagDto) {
     return await this.tagService.create(createTagDto);
   }
 
   @Post(":tag_id/users")
-  @ApiOperation({ summary: '태그에 출석해야하는 user 추가 // 이미 있는 user 추가시 error + 존재하지 않는 tag나 user일 시 error'})
+  @ApiOperation({ summary: '태그에 출석해야하는 user 추가 // 이미 있는 user 추가시 error + 존재하지 않는 tag나 user일 시 error // admin API'})
   @SetAuthority('CalendarManager')
   async addUser(@Param('tag_id') id:number, @Body() userIdsDto: UserIdsDto) {
     return await this.tagService.addUser(id, userIdsDto);
@@ -52,7 +52,7 @@ export class TagController {
 
 
   @Delete(":tag_id/users")
-  @ApiOperation({ summary: '태그에 출석해야하는 user 삭제'})
+  @ApiOperation({ summary: '태그에 출석해야하는 user 삭제 // admin API'})
   @SetAuthority('CalendarManager')
   async deleteUser(@Param('tag_id') id:number, @Body() userIdsDto: UserIdsDto) {
     return await this.tagService.deleteUser(id, userIdsDto);
@@ -60,7 +60,7 @@ export class TagController {
 
 
   @Patch(":tag_id/property/:property_id")
-  @ApiOperation({ summary: '태그 속성 설정'})
+  @ApiOperation({ summary: '태그 속성 설정 // admin API'})
   @SetAuthority('CalendarManager')
   async setProperty(@Param('tag_id') tag_id:number, @Param('property_id') property_id:number) {
     return await this.tagService.setProperty(tag_id, property_id);

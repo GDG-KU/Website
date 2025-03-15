@@ -16,7 +16,7 @@ export class EventController {
 
   @Post()
   @SetAuthority('CalendarManager')
-  @ApiOperation({ summary: '일정 생성 및 동기화'})
+  @ApiOperation({ summary: '일정 생성 및 동기화 // admin API'})
   @ApiResponse({
     description: '일정 생성 성공',
     type: EventResponseDto,
@@ -27,7 +27,7 @@ export class EventController {
 
   @Post(':event_id/attendance')
   @SetAuthority('CalendarManager')
-  @ApiOperation({ summary: '일정 참석 여부 동기화'})
+  @ApiOperation({ summary: '일정 참석 여부 동기화 // admin API'})
   setAttendance(@Param('event_id') event_id: number) {
     return this.eventService.setAttendance(event_id);
   }
@@ -39,7 +39,6 @@ export class EventController {
   }
 
   @Get("bydate")
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('token')
   @ApiOperation({ summary: 'start_date와 end_date 사이에 있는 일정 조회'})
   @ApiResponse({
@@ -53,14 +52,14 @@ export class EventController {
 
   @Patch(":id")
   @SetAuthority('CalendarManager')
-  @ApiOperation({ summary: '일정 수정'})
+  @ApiOperation({ summary: '일정 수정 // admin API'})
   updateEvent(@Param("id") id: number,@Body() updateEventDto: UpdateEventDto) {
     return this.eventService.updateEvent(id, updateEventDto);
   }
 
   @Delete(":id")
   @SetAuthority('CalendarManager')
-  @ApiOperation({ summary: '일정 삭제'})
+  @ApiOperation({ summary: '일정 삭제 // admin API'})
   deleteEvent(@Param('id') id: number) {
     return this.eventService.deleteEvent(id);
   }
