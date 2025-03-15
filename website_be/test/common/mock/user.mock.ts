@@ -1,8 +1,6 @@
-import { faker } from '@faker-js/faker';
-import { mock } from 'node:test';
 import { mockDevrelRole, mockLeadRole, mockMemberRole, mockOragnizerRole } from './role.mock';
-import { r } from '@faker-js/faker/dist/airline-BXaRegOM';
 import { User } from 'src/user/entities/user.entity';
+import { mockPositions } from './position.mock';
 
 /*
 export const generateUserMock = (id: number) => {
@@ -32,6 +30,7 @@ export const mockUsers: User[] = [
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles: [mockLeadRole],
     authoritys: [],
+    positions: [mockPositions[2]],
   } as User,
   {
     id: 2,
@@ -44,6 +43,7 @@ export const mockUsers: User[] = [
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles: [mockDevrelRole],
     authoritys: [],
+    positions: [],
   } as User,
   {
     id: 3,
@@ -56,6 +56,7 @@ export const mockUsers: User[] = [
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles: [mockOragnizerRole],
     authoritys: [],
+    positions: [mockPositions[0], mockPositions[3]],
   } as User,
   {
     id: 4,
@@ -68,6 +69,7 @@ export const mockUsers: User[] = [
     created_at: new Date("2021-08-10T07:00:00.000Z"),
     user_roles : [mockMemberRole],
     authoritys: [],
+    positions: [mockPositions[1]],
   } as User
 ]
   

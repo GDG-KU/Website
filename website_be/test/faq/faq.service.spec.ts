@@ -4,8 +4,8 @@ import { FaqResponseDto } from "src/faq/dto/response/faq.response.dto";
 import { FaqService } from "src/faq/faq.service";
 import { FaqRepository } from "src/faq/repository/faq.repository";
 import { User } from "src/user/entities/user.entity";
-import { mockFaqs } from "test/mock/faq.mock";
-import { mockUsers } from "test/mock/user.mock";
+import { mockFaqs } from "test/common/mock/faq.mock";
+import { mockUsers } from "test/common/mock/user.mock";
 
 describe('FaqService', () => {
   let service: FaqService;

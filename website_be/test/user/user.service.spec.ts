@@ -6,8 +6,8 @@ import { Authority } from "src/user/entities/authority.entity";
 import { UserRepository } from "src/user/repository/user.repository";
 import { UserRoleRepository } from "src/user/repository/user_role.repository";
 import { UserService } from "src/user/user.service";
-import { mockMemberRole } from "test/mock/role.mock";
-import { mockUsers } from "test/mock/user.mock";
+import { mockMemberRole } from "test/common/mock/role.mock";
+import { mockUsers } from "test/common/mock/user.mock";
 import { DataSource } from "typeorm";
 
 
