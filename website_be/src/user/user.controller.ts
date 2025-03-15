@@ -17,7 +17,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @ApiOperation({ summary: '유저 조회' })
+  @ApiOperation({ summary: '유저 조회 // admin API' })
   @SetAuthority('PointManager', 'CalendarManager', 'AttendanceManager', 'RoleManager', 'AuthorityManager')
   @ApiResponse({
     description: '유저 조회 성공',
@@ -31,7 +31,7 @@ export class UserController {
 
   
   @Patch("role")
-  @ApiOperation({ summary: '유저 역할 변경'})
+  @ApiOperation({ summary: '유저 역할 변경 // admin API'})
   @SetAuthority('RoleManager')
   @ApiResponse({
     description: '유저 역할 변경 성공',
@@ -43,7 +43,7 @@ export class UserController {
   }
 
   @Patch("authority")
-  @ApiOperation({ summary: '유저 권한 변경'})
+  @ApiOperation({ summary: '유저 권한 변경 // admin API'})
   @SetAuthority('AuthorityManager')
   @ApiResponse({
     description: '유저 권한 변경 성공',

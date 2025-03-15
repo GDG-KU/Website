@@ -54,6 +54,7 @@ export class PointController {
 
   @Post()
   @SetAuthority('PointManager')
+  @ApiOperation({ summary: '포인트 추가 // admin API' })
   async updatePoint(
     @Body() userPoint: UserPointDto,
   ): Promise<RolePointResponseDto> {
@@ -67,7 +68,7 @@ export class PointController {
   }
 
   @Get('history/:userId')
-  @ApiOperation({ summary: '포인트 히스토리 조회' })
+  @ApiOperation({ summary: '포인트 히스토리 조회 // admin API' })
   @ApiResponse({ type: [MypageHistoryResponseDto] })
   @ApiQuery({ name: 'role', required: false, type: String })
   @ApiQuery({ name: 'cursor', required: false, type: Number })
@@ -84,7 +85,7 @@ export class PointController {
   }
 
   @Patch('history/:historyId')
-  @ApiOperation({ summary: '포인트 히스토리 복구' })
+  @ApiOperation({ summary: '포인트 히스토리 복구 // admin API' })
   @SetAuthority('PointManager')
   async restorePointHistory(
     @Param('historyId') historyId: number,
@@ -94,7 +95,7 @@ export class PointController {
   }
 
   @Delete('history/:historyId')
-  @ApiOperation({ summary: '포인트 히스토리 삭제' })
+  @ApiOperation({ summary: '포인트 히스토리 삭제 // admin API' })
   @SetAuthority('PointManager')
   async deletePointHistory(
     @Param('historyId') historyId: number,

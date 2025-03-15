@@ -16,7 +16,7 @@ export class AttendanceController {
 
   @Get(':event_id')
   @SetAuthority('AttendanceManager')
-  @ApiOperation({ summary: '해당 이벤트의 유저 참석 여부 조회' })
+  @ApiOperation({ summary: '해당 이벤트의 유저 참석 여부 조회 // admin API' })
   @ApiResponse({
     type: [AttendanceResponseDto],
     description: '해당 이벤트 유저의 참석여부 조회',
@@ -36,21 +36,21 @@ export class AttendanceController {
 
   @Patch()
   @SetAuthority('AttendanceManager')
-  @ApiOperation({ summary: '참석 여부 수정' })
+  @ApiOperation({ summary: '참석 여부 수정 // admin API' })
   updateAttendances(@Body() updateAttendancesDto: UpdateAttendancesDto) {
     return this.attendanceService.updateAttendances(updateAttendancesDto);
   }
 
   @Post(':event_id/users')
   @SetAuthority('AttendanceManager')
-  @ApiOperation({ summary: '이벤트에 참석해야하는 사람 추가' })
+  @ApiOperation({ summary: '이벤트에 참석해야하는 사람 추가 // admin API' })
   addUsersToEvent(@Param('event_id') event_id: number, @Body() userIdsDto: UserIdsDto) {
     return this.attendanceService.addUsersByEvent(event_id, userIdsDto);
   }
 
   @Delete(':event_id/users')
   @SetAuthority('AttendanceManager')
-  @ApiOperation({ summary: '이벤트에 참석해야하는 사람 삭제' })
+  @ApiOperation({ summary: '이벤트에 참석해야하는 사람 삭제 // admin API' })
   deleteUsersByEvent(@Param('event_id') event_id: number, @Body() userIdsDto: UserIdsDto) {
     return this.attendanceService.deleteUsersByEvent(event_id, userIdsDto);
   }

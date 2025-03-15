@@ -19,7 +19,7 @@ export class FaqController {
   // FAQ 생성
   @Post()
   @SetAuthority('FaqManager')
-  @ApiOperation({ summary: 'FAQ 생성' })
+  @ApiOperation({ summary: 'FAQ 생성 // admin API' })
   @ApiResponse({ status: 201, description: 'FAQ가 성공적으로 생성되었습니다.', type: FaqResponseDto })
   async createFaq(@Req() req, @Body() createFaqDto: CreateFaqDto): Promise<FaqResponseDto> {
     const { user } = req;
@@ -45,7 +45,7 @@ export class FaqController {
   // FAQ 수정
 @Put(':id')
 @SetAuthority('FaqManager')
-@ApiOperation({ summary: 'FAQ 수정' })
+@ApiOperation({ summary: 'FAQ 수정 // admin API' })
 @ApiResponse({ status: 200, description: 'FAQ 수정 성공', type: FaqResponseDto })
 async updateFaq(
   @Param('id') id: number,
@@ -57,7 +57,7 @@ async updateFaq(
   // FAQ 삭제
   @Delete(':id')
   @SetAuthority('FaqManager')
-  @ApiOperation({ summary: 'FAQ 삭제' })
+  @ApiOperation({ summary: 'FAQ 삭제 // admin API' })
   @ApiResponse({ status: 200, description: 'FAQ 삭제 성공' })
   async deleteFaq(@Param('id') id: number): Promise<void> {
     return this.faqService.deleteFaq(id);

@@ -17,7 +17,7 @@ export class TagPropertyController {
 
   @Post()
   @SetAuthority('CalendarManager')
-  @ApiOperation({ summary: '태그 속성 생성 // branch, fetch, hotfix 등'})
+  @ApiOperation({ summary: '태그 속성 생성 // branch, fetch, hotfix 등 // admin API'})
   @ApiResponse({
     description: '태그 속성 생성 성공',
     type: TagPropertyResonseDto,
@@ -38,7 +38,7 @@ export class TagPropertyController {
 
   @Delete(':id')
   @SetAuthority('CalendarManager')
-  @ApiOperation({ summary: '태그 속성 삭제'})
+  @ApiOperation({ summary: '태그 속성 삭제 // admin API'})
   async deleteTagProperty(@Param('id') id: number) {
     return await this.tagPropertyService.deleteTagProperty(id);
   }
