@@ -36,6 +36,16 @@ export class AuthController {
     return res.redirect('https://koreauniv.gdgoc.kr/');
   }
 
+  @Post('logout')
+  @ApiOperation({ summary: '로그아웃', description: 'access token, refresh token 삭제' })
+  @UseGuards(JwtAuthGuard)
+  async logout(@Res({ passthrough: true }) res: Response){
+    // access token, refresh token 쿠키 삭제
+    res.clearCookie('access_token', { domain: '.koreauniv.gdgoc.kr'});
+    res.clearCookie('refresh_token', { domain: '.koreauniv.gdgoc.kr'});
+    return {message: 'logout success'};
+  }
+
 
   @Post('refresh')
   @ApiOperation({ summary: 'JWT 토큰 재발급', description: 'access token이 만료되면 이 api로 재발급 받아야 함.' })
